@@ -23,7 +23,7 @@ registerSketch('sk3', function (p) {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
     // Create button
-    myButton = p.createButton('Click me');
+    myButton = p.createButton('Start');
     myButton.mousePressed(() => {
     // Button click handler
       startTime = p.millis();
@@ -40,23 +40,42 @@ registerSketch('sk3', function (p) {
     p.fill('grey');
     p.rect(p.windowWidth / 2 - 300, p.windowHeight / 2 - 350, 600, 500);
 
-    p.image(enemy, p.windowWidth / 2, p.windowHeight / 2 - 230, 200, 200);
-    p.fill('black')
-    p.text("INFO 474 HW4", p.windowWidth / 2 + 100, p.windowHeight / 2 - 15);
 
-    drawCharacter()
-
+    let statusText = "Ready...";
+    if(startTime !== -1) {
+      if(restOn) {
+        statusText = "Resting...";
+      } else {
+        statusText = "Working!!";
+      }
+    }
 
     if(restOn) {
       drawTimer(restLength);
     } else {
+      drawEnemy(coding, "INFO 474 HW4");
       drawTimer(workLength);
     }
+    drawCharacter();
+
+    p.fill('black');
+    p.textSize(40);
+    p.textAlign(p.CENTER, p.TOP);
+    p.text(statusText, p.windowWidth / 2, p.windowHeight / 2 - 350 + 40);
   };
 
 
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+
+
+  function drawEnemy(enemy) {
+    p.image(enemy, p.windowWidth / 2, p.windowHeight / 2 - 230, 200, 200);
+    p.fill('black')
+    p.textSize(18);
+    p.text("INFO 474 HW4", p.windowWidth / 2 + 100, p.windowHeight / 2 - 20);
+  }
+
 
   function drawCharacter() {
     if(startTime === -1) {
