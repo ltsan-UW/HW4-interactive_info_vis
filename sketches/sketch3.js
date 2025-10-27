@@ -7,6 +7,18 @@ registerSketch('sk3', function (p) {
   let restLength = 0.05 * 60 * 1000; //minutes to ms
   let restOn = false;
 
+
+  let writing = p.loadImage('/sketches/assets/writing.webp');
+  let coding = p.loadImage('/sketches/assets/coding.gif');
+  let link = p.loadImage('/sketches/assets/link.gif');
+  let linkReady = p.loadImage('/sketches/assets/link-ready.gif');
+  let linkRest = p.loadImage('/sketches/assets/link-rest.gif');
+
+  let character = link;
+  let enemy = coding;
+
+
+
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
@@ -19,10 +31,21 @@ registerSketch('sk3', function (p) {
   };
 
   p.draw = function () {
+    let midX = p.windowWidth / 2;
+    let midY = p.windowHeight / 2
 
     centerButton(myButton)
 
-    p.background('white');
+    p.background('darkgrey');
+    p.fill('grey');
+    p.rect(p.windowWidth / 2 - 300, p.windowHeight / 2 - 350, 600, 500);
+
+    p.image(enemy, p.windowWidth / 2, p.windowHeight / 2 - 230, 200, 200);
+    p.fill('black')
+    p.text("INFO 474 HW4", p.windowWidth / 2 + 100, p.windowHeight / 2 - 15);
+
+    drawCharacter()
+
 
     if(restOn) {
       drawTimer(restLength);
@@ -33,18 +56,28 @@ registerSketch('sk3', function (p) {
 
 
 
-
-
-
-
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+
+  function drawCharacter() {
+    if(startTime === -1) {
+      character = linkReady;
+    } else if(restOn) {
+      character = linkRest;
+    } else {
+      character = link;
+    }
+    p.image(character, p.windowWidth / 2 - 250 - 100, p.windowHeight / 2 - 295, 500, 295);
+  }
+
+
+
+
 
   function drawTimer(timerLength) {
     let timerMs = timerLength;
     if(startTime !== -1) {
       timerMs = startTime + timerLength- p.millis()
     }
-    console.log(timerMs);
     if(timerMs <= 0) {
       restOn = !restOn;
       startTime = p.millis()
@@ -57,8 +90,8 @@ registerSketch('sk3', function (p) {
     p.fill('black');
     p.textSize(16);
     let timerText = msToTimeString(timerMs) + " / " + msToTimeString(timerLength);
-    p.text(timerText, midX + barLength / 2 - 70, midY + 40);
-    drawRoundedBar(midX - barLength / 2, midY, barLength, 20, timerMs / timerLength);
+    p.text(timerText, midX + barLength / 2 - 70, midY + 50);
+    drawRoundedBar(midX - barLength / 2, midY + 10, barLength, 20, timerMs / timerLength);
   }
 
 
@@ -115,8 +148,16 @@ registerSketch('sk3', function (p) {
 
 /*
 
-  background image:
-  https://v3x3d.itch.io/mystic-chambers
+  Images I do not own:
+
+  link image owned by Nintendo:
+  https://i.pinimg.com/originals/b0/87/53/b08753d58f327fe00490bb5cfa7fcf03.gif
+
+  writing image upoloaded by @ehv-fernstudium on GIPHY.com
+  https://giphy.com/stickers/ehv-ehv-fernstudium-europischerhochschulverbund-9udYDMLdVzBAFuWkmF
+
+  coding gif uploaded by Zo_tov on GIFDB.com
+  https://gifdb.com/gif/scrolling-up-green-system-coding-nxt2vg8bl6e4wbo1.html
 
 
 */
