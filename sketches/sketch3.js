@@ -34,7 +34,10 @@ registerSketch('sk3', function (p) {
     let midX = p.windowWidth / 2;
     let midY = p.windowHeight / 2
 
-    centerButton(myButton)
+    myButton.position(
+      p.windowWidth / 2 - myButton.size().width / 2 - 8,
+      p.windowHeight / 2 - 350 + 500 + 10
+    );
 
     p.background('darkgrey');
     p.fill('grey');
@@ -56,12 +59,13 @@ registerSketch('sk3', function (p) {
       drawEnemy(coding, "INFO 474 HW4");
       drawTimer(workLength);
     }
-    drawCharacter();
 
     p.fill('black');
-    p.textSize(40);
+    p.textSize(38);
     p.textAlign(p.CENTER, p.TOP);
     p.text(statusText, p.windowWidth / 2, p.windowHeight / 2 - 350 + 40);
+
+    drawCharacter();
   };
 
 
@@ -153,13 +157,6 @@ registerSketch('sk3', function (p) {
 
     // Draw fill from RIGHT to LEFT
     p.rect(x, y, fillWidth, h, h/2);
-  }
-
-  function centerButton(button) {
-    button.position(
-      p.windowWidth / 2 - button.size().width / 2 - 8,
-      p.windowHeight / 2 - button.size().height / 2 + 200
-    );
   }
 
 });
