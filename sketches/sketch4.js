@@ -10,7 +10,7 @@ registerSketch('sk4', function (p) {
   let pastLines = [];
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(800, 800);
     // Create button
     myButton = p.createButton('Start');
     myButton.mousePressed(() => {
@@ -33,12 +33,12 @@ registerSketch('sk4', function (p) {
   p.draw = function () {
     p.background('lightgrey');
     myButton.position(
-      p.windowWidth / 2 - myButton.size().width / 2 - 8 - 50,
-      p.windowHeight / 2 - 350 + 500 + 10
+      800 / 2 - myButton.size().width / 2 - 8 - 50,
+      800 / 2 - 350 + 500 + 10
     );
     modeButton.position(
-      p.windowWidth / 2 - myButton.size().width / 2 - 8 + 50,
-      p.windowHeight / 2 - 350 + 500 + 10
+      800 / 2 - myButton.size().width / 2 - 8 + 50,
+      800 / 2 - 350 + 500 + 10
     );
 
 
@@ -47,9 +47,9 @@ registerSketch('sk4', function (p) {
     p.strokeWeight(0);
     p.textSize(40);
     if(startTime !== -1) {
-      p.text(msToTimeString(p.millis() - startTime), p.windowWidth / 2, p.windowHeight/ 2);
+      p.text(msToTimeString(p.millis() - startTime), 800 / 2, 800/ 2);
     } else {
-      p.text(msToTimeString(0), p.windowWidth / 2, p.windowHeight/ 2);
+      p.text(msToTimeString(0), 800 / 2, 800/ 2);
     }
     drawTimeLine(totalTimeOfLine);
     drawPastLines()
@@ -58,7 +58,7 @@ registerSketch('sk4', function (p) {
 
 
   };
-  p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+  p.windowResized = function () { p.resizeCanvas(800, 800); };
 
   //helper function written with AI
   function msToTimeString(ms) {
@@ -81,8 +81,8 @@ registerSketch('sk4', function (p) {
   function drawPastLines() {
     if(pastLines.length === 0) return;
 
-    let baseX = p.windowWidth / 2;
-    let baseY = p.windowHeight / 2 + 280; // start below main line
+    let baseX = 800 / 2;
+    let baseY = 800 / 2 + 280; // start below main line
     let lineSpacing = 40; // vertical spacing between past lines
 
     p.fill(0);
@@ -129,8 +129,8 @@ registerSketch('sk4', function (p) {
     let progress = timerMs / timerLength;
 
     // Define line position and size
-    let lineX = p.windowWidth / 2 - 200; // start x
-    let lineY = p.windowHeight / 2 + 200; // vertical position
+    let lineX = 800 / 2 - 200; // start x
+    let lineY = 800 / 2 + 200; // vertical position
     let lineWidth = 400; // full line width
 
     // Draw background line
@@ -142,7 +142,7 @@ registerSketch('sk4', function (p) {
     // Draw progress line
     p.stroke(working ? 'lightgreen' : 'lightblue');
     p.strokeWeight(8);
-    p.line(p.windowWidth / 2 - 200, lineY, p.windowWidth / 2 - 200 + lineWidth * progress, lineY);
+    p.line(800 / 2 - 200, lineY, 800 / 2 - 200 + lineWidth * progress, lineY);
 
 
     let prevDurations = 0;

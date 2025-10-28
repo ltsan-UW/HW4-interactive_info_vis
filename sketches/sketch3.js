@@ -27,7 +27,7 @@ registerSketch('sk3', function (p) {
 
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(800, 800);
 
     // Create button
     myButton = p.createButton('Start');
@@ -38,17 +38,17 @@ registerSketch('sk3', function (p) {
   };
 
   p.draw = function () {
-    let midX = p.windowWidth / 2;
-    let midY = p.windowHeight / 2
+    let midX = 800 / 2;
+    let midY = 800 / 2
 
     myButton.position(
-      p.windowWidth / 2 - myButton.size().width / 2 - 8,
-      p.windowHeight / 2 - 350 + 500 + 10
+      800 / 2 - myButton.size().width / 2 - 8,
+      800 / 2 - 350 + 500 + 10
     );
 
     p.background('darkgrey');
     p.fill('lightgrey');
-    p.rect(p.windowWidth / 2 - 300, p.windowHeight / 2 - 350, 600, 500);
+    p.rect(800 / 2 - 300, 800 / 2 - 350, 600, 500);
 
 
     let statusText = "Ready...";
@@ -70,21 +70,21 @@ registerSketch('sk3', function (p) {
     p.fill('black');
     p.textSize(38);
     p.textAlign(p.CENTER, p.TOP);
-    p.text(statusText, p.windowWidth / 2, p.windowHeight / 2 - 350 + 40);
+    p.text(statusText, 800 / 2, 800 / 2 - 350 + 40);
 
     drawCharacter();
   };
 
 
 
-  p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+  p.windowResized = function () { p.resizeCanvas(800, 800); };
 
 
   function drawEnemy(enemy) {
-    p.image(enemy, p.windowWidth / 2, p.windowHeight / 2 - 230, 200, 200);
+    p.image(enemy, 800 / 2, 800 / 2 - 230, 200, 200);
     p.fill('black')
     p.textSize(18);
-    p.text("INFO 474 HW4", p.windowWidth / 2 + 100, p.windowHeight / 2 - 20);
+    p.text("INFO 474 HW4", 800 / 2 + 100, 800 / 2 - 20);
   }
 
 
@@ -96,7 +96,7 @@ registerSketch('sk3', function (p) {
     } else {
       character = link;
     }
-    p.image(character, p.windowWidth / 2 - 250 - 100, p.windowHeight / 2 - 295, 500, 295);
+    p.image(character, 800 / 2 - 250 - 100, 800 / 2 - 295, 500, 295);
   }
 
 
@@ -112,8 +112,8 @@ registerSketch('sk3', function (p) {
       restOn = !restOn;
       startTime = p.millis()
     }
-    let midX = p.windowWidth / 2;
-    let midY = p.windowHeight / 2
+    let midX = 800 / 2;
+    let midY = 800 / 2
     p.textAlign(p.CENTER, p.CENTER);
 
     let barLength = 400;
