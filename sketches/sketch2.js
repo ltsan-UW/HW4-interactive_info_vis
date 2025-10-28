@@ -44,5 +44,25 @@ registerSketch('sk2', function (p) {
     p.stroke(0);
     p.strokeWeight(3);
     p.line(x, y, lineX, lineY);
+
+    // --- Label for first slice ---
+    let mid1 = angle1 / 2;
+    let mid1Rad = p.radians(mid1);
+    let label1X = x + Math.cos(mid1Rad) * (radius / 1.5);
+    let label1Y = y + Math.sin(mid1Rad) * (radius / 1.5);
+
+    p.fill(0);
+    p.strokeWeight(1);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textSize(20);
+    p.text(restTime + " min", label1X, label1Y);
+
+    // --- Label for second slice ---
+    let mid2 = angle1 + (360 - angle1) / 2;
+    let mid2Rad = p.radians(mid2);
+    let label2X = x + Math.cos(mid2Rad) * (radius / 1.5);
+    let label2Y = y + Math.sin(mid2Rad) * (radius / 1.5);
+
+    p.text(workTime + " min", label2X, label2Y);
   }
 });
