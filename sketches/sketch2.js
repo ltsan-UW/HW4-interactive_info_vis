@@ -16,8 +16,7 @@ registerSketch('sk2', function (p) {
     p.textAlign(p.CENTER, p.CENTER);
     p.text('HWK #4. A', p.width / 2, p.height / 2);
 
-    console.log(Math.floor(p.millis() / 1000 / 60));
-    drawPie(p.mouseX, p.mouseY - 80, 50, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'green', 'yellow');
+    drawPie(p.mouseX, p.mouseY - 80, 50, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'lightgreen', 'lightblue');
   };
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };

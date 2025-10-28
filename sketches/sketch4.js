@@ -31,7 +31,7 @@ registerSketch('sk4', function (p) {
   };
 
   p.draw = function () {
-    p.background(200, 240, 200);
+    p.background('lightgrey');
     myButton.position(
       p.windowWidth / 2 - myButton.size().width / 2 - 8 - 50,
       p.windowHeight / 2 - 350 + 500 + 10
@@ -94,7 +94,7 @@ registerSketch('sk4', function (p) {
       let lineY = baseY + index * lineSpacing;
 
       lineArray.forEach(segment => {
-        p.stroke(segment.working ? 'green' : 'yellow');
+        p.stroke(segment.working ? 'lightgreen' : 'lightblue');
         p.strokeWeight(8);
         p.line(segment.lineStart, lineY, segment.lineWidth, lineY);
         p.fill(0);
@@ -140,7 +140,7 @@ registerSketch('sk4', function (p) {
 
 
     // Draw progress line
-    p.stroke(working ? 'green' : 'yellow');
+    p.stroke(working ? 'lightgreen' : 'lightblue');
     p.strokeWeight(8);
     p.line(p.windowWidth / 2 - 200, lineY, p.windowWidth / 2 - 200 + lineWidth * progress, lineY);
 
@@ -151,7 +151,7 @@ registerSketch('sk4', function (p) {
       prevDurations += segment.duration;
       prevLengths += segment.length;
       let time = Math.floor(segment.duration / 1000  / 60 * 100) / 100;
-      p.stroke(segment.working ? 'green' : 'yellow');
+      p.stroke(segment.working ? 'lightgreen' : 'lightblue');
       p.strokeWeight(8);
       p.line(segment.lineStart, lineY, segment.lineWidth, lineY);
       p.fill(0);

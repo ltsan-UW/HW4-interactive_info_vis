@@ -47,7 +47,7 @@ registerSketch('sk3', function (p) {
     );
 
     p.background('darkgrey');
-    p.fill('grey');
+    p.fill('lightgrey');
     p.rect(p.windowWidth / 2 - 300, p.windowHeight / 2 - 350, 600, 500);
 
 
