@@ -15,10 +15,9 @@ registerSketch('sk2', function (p) {
     p.textSize(32);
     p.textAlign(p.CENTER, p.CENTER);
     p.text('HWK #4. A', p.width / 2, p.height / 2);
-    p.ellipse(p.mouseX, p.mouseY - 50, 50,50);
 
     console.log(Math.floor(p.millis() / 1000 / 60));
-    drawPie(p.windowWidth / 2, p.windowHeight / 2, 150, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'green', 'yellow');
+    drawPie(p.mouseX, p.mouseY - 80, 50, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'green', 'yellow');
   };
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
@@ -54,8 +53,8 @@ registerSketch('sk2', function (p) {
     p.fill(0);
     p.strokeWeight(1);
     p.textAlign(p.CENTER, p.CENTER);
-    p.textSize(20);
-    p.text(restTime + " min", label1X, label1Y);
+    p.textSize(12);
+    p.text(restTime + "m", label1X, label1Y);
 
     // --- Label for second slice ---
     let mid2 = angle1 + (360 - angle1) / 2;
@@ -63,6 +62,6 @@ registerSketch('sk2', function (p) {
     let label2X = x + Math.cos(mid2Rad) * (radius / 1.5);
     let label2Y = y + Math.sin(mid2Rad) * (radius / 1.5);
 
-    p.text(workTime + " min", label2X, label2Y);
+    p.text(workTime + "m", label2X, label2Y);
   }
 });
