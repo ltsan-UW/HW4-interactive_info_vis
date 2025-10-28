@@ -5,6 +5,9 @@ registerSketch('sk2', function (p) {
   let restTime = 0.4;
   let totalTime = workTime + restTime;
 
+  let showPie = false;
+  let pieTimer = 0;
+
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.angleMode(p.DEGREES);
@@ -16,8 +19,20 @@ registerSketch('sk2', function (p) {
     p.textAlign(p.CENTER, p.CENTER);
     p.text('HWK #4. A', p.width / 2, p.height / 2);
 
-    drawPie(p.mouseX, p.mouseY - 80, 50, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'lightgreen', 'lightblue');
+    if(showPie) {
+      drawPie(p.mouseX, p.mouseY - 80, 50, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'lightgreen', 'lightblue');
+    }
+    if (p.millis() > pieTimer) {
+      showPie = false;
+    }
   };
+
+  p.mousePressed = function () {
+    if (p.mouseButton === p.LEFT) {
+      showPie = true;
+      pieTimer = p.millis() + 5000;
+    }
+  }
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 
