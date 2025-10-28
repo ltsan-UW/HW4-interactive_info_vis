@@ -2,7 +2,8 @@
 registerSketch('sk4', function (p) {
 
   let startTime = -1;
-  let totalTimeOfLine = 1 * 1000;
+  let minutesMax = 1;
+  let totalTimeOfLine = minutesMax * 1000 * 60;
   let working = true;
   let newSegment = false;
   let segments = [];
@@ -28,7 +29,9 @@ registerSketch('sk4', function (p) {
       newSegment = true;
     });
   };
+
   p.draw = function () {
+    p.background(200, 240, 200);
     myButton.position(
       p.windowWidth / 2 - myButton.size().width / 2 - 8 - 50,
       p.windowHeight / 2 - 350 + 500 + 10
@@ -38,7 +41,12 @@ registerSketch('sk4', function (p) {
       p.windowHeight / 2 - 350 + 500 + 10
     );
 
-    p.background(200, 240, 200);
+
+
+    p.fill('black');
+    p.strokeWeight(0);
+    p.textSize(40);
+    p.text(msToTimeString(p.millis() - startTime), p.windowWidth / 2, p.windowHeight/ 2);
     drawTimeLine(totalTimeOfLine);
     drawPastLines()
 
@@ -48,17 +56,35 @@ registerSketch('sk4', function (p) {
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
 
+  //helper function written with AI
+  function msToTimeString(ms) {
+    // Prevent negative values
+    if (ms < 0) ms = 0;
+
+    let totalSeconds = Math.floor(ms / 1000);
+    let hours = Math.floor(totalSeconds / 3600);
+    let minutes = Math.floor((totalSeconds % 3600) / 60);
+    let seconds = totalSeconds % 60;
+
+    // Format as HH:MM:SS
+    return (
+      String(hours).padStart(2, '0') + ':' +
+      String(minutes).padStart(2, '0') + ':' +
+      String(seconds).padStart(2, '0')
+    );
+  }
+
   function drawPastLines() {
     if(pastLines.length === 0) return;
 
     let baseX = p.windowWidth / 2;
     let baseY = p.windowHeight / 2 + 280; // start below main line
-    let lineSpacing = 30; // vertical spacing between past lines
+    let lineSpacing = 40; // vertical spacing between past lines
 
     p.fill(0);
     p.textSize(16);
     p.textAlign(p.LEFT, p.TOP);
-    p.text("Past Lines", baseX - 30, baseY - 25);
+    p.text("Past Lines", baseX - 30, baseY - 45);
 
     pastLines.forEach((lineArray, index) => {
       let lineY = baseY + index * lineSpacing;
@@ -67,6 +93,14 @@ registerSketch('sk4', function (p) {
         p.stroke(segment.working ? 'green' : 'yellow');
         p.strokeWeight(8);
         p.line(segment.lineStart, lineY, segment.lineWidth, lineY);
+        p.fill(0);
+        p.strokeWeight(0);
+        p.textSize(16);
+        p.textAlign(p.CENTER, p.CENTER);
+
+        let midX = (segment.lineWidth + (segment.lineWidth - segment.length)) / 2;
+        let time = Math.floor(segment.duration / 1000  / 60 * 100) / 100;
+        p.text(time, midX, lineY - 12);
       });
     });
   }
@@ -107,11 +141,22 @@ registerSketch('sk4', function (p) {
     p.line(p.windowWidth / 2 - 200, lineY, p.windowWidth / 2 - 200 + lineWidth * progress, lineY);
 
 
-
+    let prevDurations = 0;
+    let prevLengths = 0;
     segments.forEach((segment) => {
+      prevDurations += segment.duration;
+      prevLengths += segment.length;
+      let time = Math.floor(segment.duration / 1000  / 60 * 100) / 100;
       p.stroke(segment.working ? 'green' : 'yellow');
       p.strokeWeight(8);
       p.line(segment.lineStart, lineY, segment.lineWidth, lineY);
+      p.fill(0);
+      p.strokeWeight(0);
+      p.textSize(16);
+      p.textAlign(p.CENTER, p.CENTER);
+
+      let midX = (segment.lineWidth + (segment.lineWidth - segment.length)) / 2;
+      p.text(time, midX, lineY - 15);
     })
 
 
@@ -126,14 +171,14 @@ registerSketch('sk4', function (p) {
     p.fill(0);
     p.textSize(16);
     p.textAlign(p.CENTER, p.BOTTOM);
-    p.text("0", lineX, lineY - 10);              // left end
-    p.text("60", lineX + lineWidth, lineY - 10); // right end
+    p.text("0", lineX, lineY + 30);              // left end
+    p.text(minutesMax, lineX + lineWidth, lineY + 30); // right end
 
 
     // Check if a line segment is finished
     if (newSegment && startTime !== -1) {
       // Add finished segment
-      segments.unshift({working: !working, lineStart: lineX, lineWidth: lineX + lineWidth * progress});
+      segments.unshift({working: !working, lineStart: lineX, lineWidth: lineX + lineWidth * progress, duration: timerMs - prevDurations, length: lineWidth * progress - prevLengths});
       console.log(segments);
       newSegment = false;
     }
@@ -141,14 +186,12 @@ registerSketch('sk4', function (p) {
 
     if(timerMs >= timerLength) {
 
-      segments.unshift({working: working, lineStart: lineX, lineWidth: lineX + lineWidth * progress});
+      segments.unshift({working: working, lineStart: lineX, lineWidth: lineX + lineWidth * progress, duration: timerMs - prevDurations, length: lineWidth * progress - prevLengths});
       console.log(segments);
       pastLines.push(segments);
       segments = [];
-      startTime = -1;
+      startTime = p.millis();
+      newSegment = false;
     }
   }
-
-
-
 });

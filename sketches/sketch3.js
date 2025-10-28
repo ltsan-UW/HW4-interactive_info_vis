@@ -10,8 +10,8 @@ registerSketch('sk3', function (p) {
 
 
   let startTime = -1;
-  let workLength = 0.05 * 60 * 1000; //minutes to ms
-  let restLength = 0.05 * 60 * 1000; //minutes to ms
+  let workLength = 0.3 * 60 * 1000; //minutes to ms
+  let restLength = 0.2 * 60 * 1000; //minutes to ms
   let restOn = false;
 
 
