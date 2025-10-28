@@ -2,10 +2,11 @@
 registerSketch('sk4', function (p) {
 
   let startTime = -1;
-  let totalTimeOfLine = 10 * 1000;
+  let totalTimeOfLine = 1 * 1000;
   let working = true;
   let newSegment = false;
   let segments = [];
+  let pastLines = [];
 
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
@@ -39,8 +40,36 @@ registerSketch('sk4', function (p) {
 
     p.background(200, 240, 200);
     drawTimeLine(totalTimeOfLine);
+    drawPastLines()
+
+
+
+
   };
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+
+  function drawPastLines() {
+    if(pastLines.length === 0) return;
+
+    let baseX = p.windowWidth / 2;
+    let baseY = p.windowHeight / 2 + 280; // start below main line
+    let lineSpacing = 30; // vertical spacing between past lines
+
+    p.fill(0);
+    p.textSize(16);
+    p.textAlign(p.LEFT, p.TOP);
+    p.text("Past Lines", baseX - 30, baseY - 25);
+
+    pastLines.forEach((lineArray, index) => {
+      let lineY = baseY + index * lineSpacing;
+
+      lineArray.forEach(segment => {
+        p.stroke(segment.working ? 'green' : 'yellow');
+        p.strokeWeight(8);
+        p.line(segment.lineStart, lineY, segment.lineWidth, lineY);
+      });
+    });
+  }
 
 
   // Record line progress based on timer
@@ -49,9 +78,11 @@ registerSketch('sk4', function (p) {
 
     if(startTime === -1){
       timerMs = 0; // hasn't started yet
+      newSegment = false;
     } else {
       timerMs = p.millis() - startTime; // elapsed time
     }
+
 
     // Constrain elapsed time to timer length
     timerMs = p.constrain(timerMs, 0, timerLength);
@@ -91,13 +122,30 @@ registerSketch('sk4', function (p) {
     let markerY = lineY - 8;
     p.rect(markerX, markerY, 4, 16); // circle marker
 
+    // Draw labels at ends
+    p.fill(0);
+    p.textSize(16);
+    p.textAlign(p.CENTER, p.BOTTOM);
+    p.text("0", lineX, lineY - 10);              // left end
+    p.text("60", lineX + lineWidth, lineY - 10); // right end
+
 
     // Check if a line segment is finished
-    if (newSegment) {
+    if (newSegment && startTime !== -1) {
       // Add finished segment
       segments.unshift({working: !working, lineStart: lineX, lineWidth: lineX + lineWidth * progress});
       console.log(segments);
       newSegment = false;
+    }
+
+
+    if(timerMs >= timerLength) {
+
+      segments.unshift({working: working, lineStart: lineX, lineWidth: lineX + lineWidth * progress});
+      console.log(segments);
+      pastLines.push(segments);
+      segments = [];
+      startTime = -1;
     }
   }
 
