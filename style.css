@@ -55,3 +55,7 @@ canvas {
   height: auto;
   display: block;
 }
+
+figure > img {
+  width: 400px;
+}
