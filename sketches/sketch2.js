@@ -1,5 +1,10 @@
 // Instance-mode sketch for tab 2
 registerSketch('sk2', function (p) {
+
+  let workTime = 0.5;
+  let restTime = 0.4;
+  let totalTime = workTime + restTime;
+
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.angleMode(p.DEGREES);
@@ -12,8 +17,8 @@ registerSketch('sk2', function (p) {
     p.text('HWK #4. A', p.width / 2, p.height / 2);
     p.ellipse(p.mouseX, p.mouseY - 50, 50,50);
 
-
-    drawPie(p.windowWidth / 2, p.windowHeight / 2, 150, 0.5, 0.4, 'green', 'yellow');
+    console.log(Math.floor(p.millis() / 1000 / 60));
+    drawPie(p.windowWidth / 2, p.windowHeight / 2, 150, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'green', 'yellow');
   };
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
@@ -39,11 +44,5 @@ registerSketch('sk2', function (p) {
     p.stroke(0);
     p.strokeWeight(3);
     p.line(x, y, lineX, lineY);
-
-    p.fill(0);
-    p.strokeWeight(1);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.textSize(24);
-    p.text(`${percent * 100}%`, x, y - radius);
   }
 });
