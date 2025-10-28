@@ -15,15 +15,14 @@ registerSketch('sk3', function (p) {
   let restOn = false;
 
 
-  let writing = p.loadImage('/sketches/assets/writing.webp');
-  let coding = p.loadImage('/sketches/assets/coding.gif');
-  let link = p.loadImage('/sketches/assets/link.gif');
-  let linkReady = p.loadImage('/sketches/assets/link-ready.gif');
-  let linkRest = p.loadImage('/sketches/assets/link-rest.gif');
+  let writing = p.loadImage('sketches/assets/writing.webp');
+  let coding = p.loadImage('sketches/assets/coding.gif');
+  let link = p.loadImage('sketches/assets/link.gif');
+  let linkReady = p.loadImage('sketches/assets/link-ready.gif');
+  let linkRest = p.loadImage('sketches/assets/link-rest.gif');
 
   let character = link;
   let enemy = coding;
-
 
 
   p.setup = function () {
