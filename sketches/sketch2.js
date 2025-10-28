@@ -17,7 +17,7 @@ registerSketch('sk2', function (p) {
     p.fill(100, 150, 240);
     p.textSize(32);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text('HWK #4. A', p.width / 2, p.height / 2);
+    p.text('Left Click', p.width / 2, p.height / 2);
 
     if(showPie) {
       drawPie(p.mouseX, p.mouseY - 80, 50, workTime / totalTime, p.millis() / 1000 / 60/ totalTime, 'lightgreen', 'lightblue');
