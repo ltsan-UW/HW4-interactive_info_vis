@@ -46,7 +46,11 @@ registerSketch('sk4', function (p) {
     p.fill('black');
     p.strokeWeight(0);
     p.textSize(40);
-    p.text(msToTimeString(p.millis() - startTime), p.windowWidth / 2, p.windowHeight/ 2);
+    if(startTime !== -1) {
+      p.text(msToTimeString(p.millis() - startTime), p.windowWidth / 2, p.windowHeight/ 2);
+    } else {
+      p.text(msToTimeString(0), p.windowWidth / 2, p.windowHeight/ 2);
+    }
     drawTimeLine(totalTimeOfLine);
     drawPastLines()
 
