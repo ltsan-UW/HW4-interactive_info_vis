@@ -1,4 +1,11 @@
 // Instance-mode sketch for tab 3
+//ideas:
+  //zelda gamified studying thing where link battles a monster (assignment) and as time goes on both health goes down
+  //press to take a break and heal
+  //minutes spent = health goes down and attacks
+  //health is the max ammount of time you can spend
+  // cool animaiton if you finish hw early
+  // health potion to do more work
 registerSketch('sk3', function (p) {
 
 
@@ -119,7 +126,7 @@ registerSketch('sk3', function (p) {
 
 
 
-  //helper functions
+  //helper functions mostly written with AI
   function msToTimeString(ms) {
     // Prevent negative values
     if (ms < 0) ms = 0;
