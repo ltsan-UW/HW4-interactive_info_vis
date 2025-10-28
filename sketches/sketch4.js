@@ -2,7 +2,7 @@
 registerSketch('sk4', function (p) {
 
   let startTime = -1;
-  let minutesMax = 1;
+  let minutesMax = 60;
   let totalTimeOfLine = minutesMax * 1000 * 60;
   let working = true;
   let newSegment = false;

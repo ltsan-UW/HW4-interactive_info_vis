@@ -1,8 +1,8 @@
 // Instance-mode sketch for tab 2
 registerSketch('sk2', function (p) {
 
-  let workTime = 0.5;
-  let restTime = 0.4;
+  let workTime = 40;
+  let restTime = 20;
   let totalTime = workTime + restTime;
 
   let showPie = false;
