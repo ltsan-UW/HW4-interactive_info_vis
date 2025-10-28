@@ -14,8 +14,8 @@ registerSketch('sk4', function (p) {
     // Create button
     myButton = p.createButton('Start');
     myButton.mousePressed(() => {
-    // Button click handler
       startTime = p.millis();
+      myButton.remove();
     });
     modeButton = p.createButton('Mode: Working');
     modeButton.mousePressed(() => {
@@ -36,10 +36,18 @@ registerSketch('sk4', function (p) {
       800 / 2 - myButton.size().width / 2 - 8 - 50,
       800 / 2 - 350 + 500 + 10
     );
-    modeButton.position(
-      800 / 2 - myButton.size().width / 2 - 8 + 50,
-      800 / 2 - 350 + 500 + 10
-    );
+
+    if(startTime === -1) {
+      modeButton.position(
+        800 / 2 - myButton.size().width / 2 - 8 + 50,
+        800 / 2 - 350 + 500 + 10
+      );
+    } else {
+      modeButton.position(
+        800 / 2 - 100,
+        800 / 2 - 350 + 500 + 10
+      );
+    }
 
 
 
