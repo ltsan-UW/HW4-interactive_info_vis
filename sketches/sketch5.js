@@ -2,11 +2,13 @@
 registerSketch('sk5', function (p) {
 
   const draftPlayerMap = new Map();
+  const draftPlayerFree = new Set();
 
   let boardData;
   let draftData;
 
   let correctnessRange = 3;
+  let rankRange = [1,30];
 
   let textColor = "black"
   let correctColor = "green"
@@ -29,6 +31,9 @@ registerSketch('sk5', function (p) {
 
     for(let i = 0; i < draftData.getRowCount(); i++) {
       draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
+      if(i < rankRange[1]) {
+        draftPlayerFree.add(draftData.getString(i, "Player"));
+      }
     }
 
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
@@ -56,7 +61,6 @@ registerSketch('sk5', function (p) {
 
 
 
-    let rankRange = [1,30];
     let yStart = midHeight - graphHeight / 2;
     let yEnd = midHeight + graphHeight / 2;
     let distanceBetweenRanks = 3; // graphLength / number
@@ -67,6 +71,7 @@ registerSketch('sk5', function (p) {
     p.textAlign(p.CENTER, p.CENTER);
     p.strokeWeight(lineWeight);
 
+
     for(let i = 0; i < rankRange[1]; i++) {
       let x = midWidth - graphLength / distanceBetweenRanks;
       let x2 = midWidth + graphLength / distanceBetweenRanks;
@@ -76,6 +81,8 @@ registerSketch('sk5', function (p) {
       let playerData = boardData.getRow(i);
       playerData = playerData.obj;
       let draftPosition = draftPlayerMap.get(playerData.Name);
+      draftPlayerFree.delete(playerData.Name);
+
 
       let y = p.map(boardRank, rankRange[0], rankRange[1], yStart, yEnd);
       let y2 = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
@@ -88,10 +95,9 @@ registerSketch('sk5', function (p) {
         p.textSize(numbersTextSize);
         p.fill(textColor);
         p.stroke(incorrectColor);
-        p.strokeWeight(lineWeight * 2);
-        p.line(x + textPixelLineOffset, y, x + textPixelLineOffset, y);
+        p.strokeWeight(lineWeight * 3);
+        p.line(x + textPixelLineOffset + 2, y, x + textPixelLineOffset + 2, y);
         p.strokeWeight(lineWeight);
-
       } else {
         if(isCorrect(boardRank, draftPosition)) {
           p.stroke(correctColor);
@@ -107,6 +113,21 @@ registerSketch('sk5', function (p) {
       p.text(i + 1, x, y);
       p.text(i + 1, x2, y);
     }
+
+    draftPlayerFree.forEach(player => {
+      let draftPosition = draftPlayerMap.get(player);
+      let y = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
+      let x = midWidth + graphLength / distanceBetweenRanks;
+      p.fill(incorrectColor);
+      p.textSize(numbersTextSize * 0.7);
+      p.textSize(numbersTextSize);
+      p.fill(textColor);
+      p.stroke(incorrectColor);
+      p.strokeWeight(lineWeight * 3);
+      p.line(x - textPixelLineOffset - 2, y, x - textPixelLineOffset - 2, y);
+      p.strokeWeight(lineWeight);
+      p.noStroke();
+    });
 
 
   }
