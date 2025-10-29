@@ -72,6 +72,8 @@ registerSketch('sk5', function (p) {
     p.strokeWeight(lineWeight);
 
 
+    let hoverData = [];
+
     for(let i = 0; i < rankRange[1]; i++) {
       let x = midWidth - graphLength / distanceBetweenRanks;
       let x2 = midWidth + graphLength / distanceBetweenRanks;
@@ -113,6 +115,24 @@ registerSketch('sk5', function (p) {
       p.fill(textColor);
       p.text(i + 1, x, y);
       p.text(i + 1, x2, y);
+
+      let d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
+      if (d < 3) {
+        hoverData = [playerData.Name, boardRank, draftPosition];
+      }
+    }
+
+    if(hoverData.length !== 0) {
+      let box = [200, 100];
+      p.fill("white");
+      p.stroke("lightgrey");
+      p.rect(p.mouseX - box[0] / 2, p.mouseY - 20 - box[0] / 2, box[0], box[1]);
+      p.line(p.mouseX, p.mouseY, p.mouseX, p.mouseY - 20);
+      p.noStroke();
+      p.fill(textColor);
+      p.text(hoverData[0], p.mouseX, p.mouseY - 20 - box[0] / 2 + 15);
+      p.text("Rank: " + hoverData[1], p.mouseX - 30, p.mouseY - 20 - box[0] / 2 + 40);
+      p.text("Pick: " + hoverData[2], p.mouseX + 30, p.mouseY - 20 - box[0] / 2 + 40);
     }
 
     draftPlayerFree.forEach(player => {
@@ -139,6 +159,36 @@ registerSketch('sk5', function (p) {
     rank2 = Number(rank2);
     return (rank1 + correctnessRange >= rank2 && rank1 - correctnessRange <= rank2)
   }
+
+  //written with AI
+  function pointLineDistance(px, py, x1, y1, x2, y2) {
+    let A = px - x1;
+    let B = py - y1;
+    let C = x2 - x1;
+    let D = y2 - y1;
+
+    let dot = A * C + B * D;
+    let len_sq = C * C + D * D;
+    let param = len_sq != 0 ? dot / len_sq : -1;
+
+    let xx, yy;
+
+    if (param < 0) {
+      xx = x1;
+      yy = y1;
+    } else if (param > 1) {
+      xx = x2;
+      yy = y2;
+    } else {
+      xx = x1 + param * C;
+      yy = y1 + param * D;
+    }
+
+    let dx = px - xx;
+    let dy = py - yy;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
 
 
   p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
