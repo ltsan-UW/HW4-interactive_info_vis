@@ -88,28 +88,29 @@ registerSketch('sk5', function (p) {
       let y2 = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
 
 
-      if(draftPosition > rankRange[1]) {
+      if(isCorrect(boardRank, draftPosition)) {
+        p.stroke(correctColor);
+        p.fill(correctColor);
+      } else {
+        p.strokeWeight(lineWeight * 2);
+        p.stroke(incorrectColor);
         p.fill(incorrectColor);
+      }
+
+      if(draftPosition > rankRange[1]) {
+        p.strokeWeight(lineWeight * 3);
+        p.line(x + textPixelLineOffset + 2, y, x + textPixelLineOffset + 2, y);
+        p.noStroke();
         p.textSize(numbersTextSize * 0.7);
         p.text(draftPosition, x + textPixelLineOffset + 10, y);
         p.textSize(numbersTextSize);
-        p.fill(textColor);
-        p.stroke(incorrectColor);
-        p.strokeWeight(lineWeight * 3);
-        p.line(x + textPixelLineOffset + 2, y, x + textPixelLineOffset + 2, y);
-        p.strokeWeight(lineWeight);
       } else {
-        if(isCorrect(boardRank, draftPosition)) {
-          p.stroke(correctColor);
-        } else {
-          p.strokeWeight(lineWeight * 2);
-          p.stroke(incorrectColor);
-        }
         p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
       }
       p.noStroke();
       p.strokeWeight(lineWeight);
 
+      p.fill(textColor);
       p.text(i + 1, x, y);
       p.text(i + 1, x2, y);
     }
