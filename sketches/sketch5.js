@@ -6,6 +6,8 @@ registerSketch('sk5', function (p) {
   let boardData;
   let draftData;
 
+  let correctnessRange = 2;
+
   p.preload = function () {
     boardData = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
@@ -50,14 +52,21 @@ registerSketch('sk5', function (p) {
 
       let playerData = boardData.getRow(i);
       playerData = playerData.obj;
-      let playerDraftPosition = draftPlayerMap.get(playerData.Name);
+      let draftPosition = draftPlayerMap.get(playerData.Name);
 
       let y = p.map(boardRank, rankRange[0], rankRange[1], yStart, yEnd);
-      let y2 = p.map(playerDraftPosition, rankRange[0], rankRange[1], yStart, yEnd);
+      let y2 = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
 
 
+      if(isCorrect(boardRank, draftPosition)) {
+        p.stroke("green");
+      } else {
+        p.stroke("red");
+      }
+      p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
+
+      p.noStroke();
       p.text(i + 1, x, y);
-      p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2)
       p.text(i + 1, x2, y);
     }
 
@@ -65,8 +74,8 @@ registerSketch('sk5', function (p) {
   }
 
 
-  function drawLine() {
-
+  function isCorrect(rank1, rank2) {
+    return (rank1 + correctnessRange >= rank2 && rank1 - correctnessRange <= rank2)
   }
 
 
