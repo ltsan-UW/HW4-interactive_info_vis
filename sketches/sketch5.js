@@ -14,7 +14,7 @@ registerSketch('sk5', function (p) {
   let correctColor = "green"
   let incorrectColor = "red"
   let numbersTextSize = 14;
-  let lineWeight = 1;
+  let lineWeight = 2;
   let graphLength = 800;
   let graphHeight = 600;
   let sliderLength = graphLength / 2;
@@ -94,7 +94,6 @@ registerSketch('sk5', function (p) {
         p.stroke(correctColor);
         p.fill(correctColor);
       } else {
-        p.strokeWeight(lineWeight * 2);
         p.stroke(incorrectColor);
         p.fill(incorrectColor);
       }
@@ -104,7 +103,7 @@ registerSketch('sk5', function (p) {
         p.line(x + textPixelLineOffset + 2, y, x + textPixelLineOffset + 2, y);
         p.noStroke();
         p.textSize(numbersTextSize * 0.7);
-        p.text(draftPosition, x + textPixelLineOffset + 10, y);
+        p.text(draftPosition, x + textPixelLineOffset + 12, y);
         p.textSize(numbersTextSize);
       } else {
         p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
@@ -117,22 +116,9 @@ registerSketch('sk5', function (p) {
       p.text(i + 1, x2, y);
 
       let d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
-      if (d < 3) {
+      if (d < 4) {
         hoverData = [playerData.Name, boardRank, draftPosition];
       }
-    }
-
-    if(hoverData.length !== 0) {
-      let box = [200, 100];
-      p.fill("white");
-      p.stroke("lightgrey");
-      p.rect(p.mouseX - box[0] / 2, p.mouseY - 20 - box[0] / 2, box[0], box[1]);
-      p.line(p.mouseX, p.mouseY, p.mouseX, p.mouseY - 20);
-      p.noStroke();
-      p.fill(textColor);
-      p.text(hoverData[0], p.mouseX, p.mouseY - 20 - box[0] / 2 + 15);
-      p.text("Rank: " + hoverData[1], p.mouseX - 30, p.mouseY - 20 - box[0] / 2 + 40);
-      p.text("Pick: " + hoverData[2], p.mouseX + 30, p.mouseY - 20 - box[0] / 2 + 40);
     }
 
     draftPlayerFree.forEach(player => {
@@ -148,8 +134,25 @@ registerSketch('sk5', function (p) {
       p.line(x - textPixelLineOffset - 2, y, x - textPixelLineOffset - 2, y);
       p.strokeWeight(lineWeight);
       p.noStroke();
+      let d = pointLineDistance(p.mouseX, p.mouseY, x - textPixelLineOffset - 2, y, x - textPixelLineOffset - 2, y);
+      if (d < 4) {
+        hoverData = [player, "N/A", draftPosition];
+      }
     });
 
+
+    if(hoverData.length !== 0) {
+      let box = [200, 100];
+      p.fill("white");
+      p.stroke("lightgrey");
+      p.rect(p.mouseX - box[0] / 2, p.mouseY - 20 - box[0] / 2, box[0], box[1]);
+      p.line(p.mouseX, p.mouseY, p.mouseX, p.mouseY - 20);
+      p.noStroke();
+      p.fill(textColor);
+      p.text(hoverData[0], p.mouseX, p.mouseY - 20 - box[0] / 2 + 15);
+      p.text("Rank: " + hoverData[1], p.mouseX - 40, p.mouseY - 20 - box[0] / 2 + 40);
+      p.text("Pick: " + hoverData[2], p.mouseX + 40, p.mouseY - 20 - box[0] / 2 + 40);
+    }
 
   }
 
