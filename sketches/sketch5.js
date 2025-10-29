@@ -8,6 +8,11 @@ registerSketch('sk5', function (p) {
 
   let correctnessRange = 2;
 
+  let textColor = "black"
+  let correctColor = "green"
+  let incorrectColor = "red"
+  let numbersTextSize = 14;
+
   p.preload = function () {
     boardData = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
@@ -41,8 +46,8 @@ registerSketch('sk5', function (p) {
     let distanceBetweenRanks = 3; // graphLength / number
     let textPixelLineOffset = 10;
 
-    p.fill(100, 150, 240);
-    p.textSize(14);
+    p.fill(textColor);
+    p.textSize(numbersTextSize);
     p.textAlign(p.CENTER, p.CENTER);
     for(let i = 0; i < rankRange[1]; i++) {
       let x = midWidth - graphLength / distanceBetweenRanks;
@@ -58,14 +63,25 @@ registerSketch('sk5', function (p) {
       let y2 = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
 
 
-      if(isCorrect(boardRank, draftPosition)) {
-        p.stroke("green");
-      } else {
-        p.stroke("red");
-      }
-      p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
+      if(draftPosition > rankRange[1]) {
+        p.fill(incorrectColor);
+        p.textSize(numbersTextSize * 0.7);
+        p.text(draftPosition, x + textPixelLineOffset + 10, y);
+        p.textSize(numbersTextSize);
+        p.fill(textColor);
+        p.stroke(incorrectColor);
+        p.line(x + textPixelLineOffset, y, x + textPixelLineOffset, y);
 
+      } else {
+        if(isCorrect(boardRank, draftPosition)) {
+          p.stroke(correctColor);
+        } else {
+          p.stroke(incorrectColor);
+        }
+        p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
+      }
       p.noStroke();
+
       p.text(i + 1, x, y);
       p.text(i + 1, x2, y);
     }
