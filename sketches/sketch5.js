@@ -6,12 +6,13 @@ registerSketch('sk5', function (p) {
   let boardData;
   let draftData;
 
-  let correctnessRange = 2;
+  let correctnessRange = 6;
 
   let textColor = "black"
   let correctColor = "green"
   let incorrectColor = "red"
   let numbersTextSize = 14;
+  let lineWeight = 1;
 
   p.preload = function () {
     boardData = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
@@ -49,6 +50,8 @@ registerSketch('sk5', function (p) {
     p.fill(textColor);
     p.textSize(numbersTextSize);
     p.textAlign(p.CENTER, p.CENTER);
+    p.strokeWeight(lineWeight);
+
     for(let i = 0; i < rankRange[1]; i++) {
       let x = midWidth - graphLength / distanceBetweenRanks;
       let x2 = midWidth + graphLength / distanceBetweenRanks;
@@ -70,17 +73,21 @@ registerSketch('sk5', function (p) {
         p.textSize(numbersTextSize);
         p.fill(textColor);
         p.stroke(incorrectColor);
+        p.strokeWeight(lineWeight * 2);
         p.line(x + textPixelLineOffset, y, x + textPixelLineOffset, y);
+        p.strokeWeight(lineWeight);
 
       } else {
         if(isCorrect(boardRank, draftPosition)) {
           p.stroke(correctColor);
         } else {
+          p.strokeWeight(lineWeight * 2);
           p.stroke(incorrectColor);
         }
         p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
       }
       p.noStroke();
+      p.strokeWeight(lineWeight);
 
       p.text(i + 1, x, y);
       p.text(i + 1, x2, y);
@@ -91,6 +98,8 @@ registerSketch('sk5', function (p) {
 
 
   function isCorrect(rank1, rank2) {
+    rank1 = Number(rank1);
+    rank2 = Number(rank2);
     return (rank1 + correctnessRange >= rank2 && rank1 - correctnessRange <= rank2)
   }
 
