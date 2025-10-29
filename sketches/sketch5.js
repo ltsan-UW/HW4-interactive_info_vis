@@ -6,13 +6,18 @@ registerSketch('sk5', function (p) {
   let boardData;
   let draftData;
 
-  let correctnessRange = 6;
+  let correctnessRange = 3;
 
   let textColor = "black"
   let correctColor = "green"
   let incorrectColor = "red"
   let numbersTextSize = 14;
   let lineWeight = 1;
+  let graphLength = 800;
+  let graphHeight = 600;
+  let sliderLength = graphLength / 2;
+
+  let correctnessSlider;
 
   p.preload = function () {
     boardData = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
@@ -25,6 +30,9 @@ registerSketch('sk5', function (p) {
     for(let i = 0; i < draftData.getRowCount(); i++) {
       draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
     }
+
+    correctnessSlider = p.createSlider(0, 20, correctnessRange);
+    correctnessSlider.style('width', sliderLength + "px");
   };
 
 
@@ -34,10 +42,17 @@ registerSketch('sk5', function (p) {
     let midWidth = p.windowWidth / 2;
     let midHeight = p.windowHeight / 2;
 
-    let graphLength = 800;
-    let graphHeight = 600;
-
     p.background(250);
+
+    correctnessRange = correctnessSlider.value();
+    correctnessSlider.position(midWidth - sliderLength / 2, midHeight - graphHeight / 2);
+    p.textAlign(p.RIGHT, p.CENTER);
+    p.text("0", midWidth - sliderLength / 2 + 10, midHeight - graphHeight / 2 - 30);
+    p.textAlign(p.LEFT, p.CENTER);
+    p.text("20", midWidth + sliderLength / 2, midHeight - graphHeight / 2 - 30);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.text("when the difference is less than " + correctnessRange, midWidth, midHeight - graphHeight / 2 - 20);
+
 
 
 
