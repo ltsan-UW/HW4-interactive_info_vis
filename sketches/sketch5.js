@@ -42,19 +42,23 @@ registerSketch('sk5', function (p) {
     p.fill(100, 150, 240);
     p.textSize(14);
     p.textAlign(p.CENTER, p.CENTER);
-    for(let i = 1; i <= rankRange[1]; i++) {
+    for(let i = 0; i < rankRange[1]; i++) {
       let x = midWidth - graphLength / distanceBetweenRanks;
       let x2 = midWidth + graphLength / distanceBetweenRanks;
-      let y = p.map(i, rankRange[0], rankRange[1], yStart, yEnd)
+
+      let boardRank = boardData.getString(i, "Rank");
 
       let playerData = boardData.getRow(i);
       playerData = playerData.obj;
       let playerDraftPosition = draftPlayerMap.get(playerData.Name);
-      console.log(playerDraftPosition);
 
-      let y2 = p.map(playerDraftPosition, rankRange[0], rankRange[1], yStart, yEnd)
-      p.text(i, x, y);
+      let y = p.map(boardRank, rankRange[0], rankRange[1], yStart, yEnd);
+      let y2 = p.map(playerDraftPosition, rankRange[0], rankRange[1], yStart, yEnd);
+
+
+      p.text(i + 1, x, y);
       p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2)
+      p.text(i + 1, x2, y);
     }
 
 
