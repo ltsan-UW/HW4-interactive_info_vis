@@ -7,6 +7,9 @@ registerSketch('sk5', function (p) {
   let boardData;
   let draftData;
 
+
+  const boardDataMap = new Map();
+
   let correctnessRange = 3;
   let rankRange = [1,30];
 
@@ -16,15 +19,20 @@ registerSketch('sk5', function (p) {
   let numbersTextSize = 14;
   let lineWeight = 2;
   let graphLength = 800;
-  let graphHeight = 800;
+  let graphHeight = 700;
   let graphPositionOffsetX = 200;
   let graphPositionOffsetY = 100;
   let sliderLength = graphLength / 2;
 
   let correctnessSlider;
+  let rankSourceSelect;
 
   p.preload = function () {
-    boardData = p.loadTable('sketches/hw5assets/SN-2024.csv', 'csv', 'header');
+    let ESPN = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
+    let SN = p.loadTable('sketches/hw5assets/SN-2024.csv', 'csv', 'header');
+    boardDataMap.set("ESPN", ESPN);
+    boardDataMap.set("SportingNews", SN);
+    boardData = ESPN;
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
   };
 
@@ -33,6 +41,19 @@ registerSketch('sk5', function (p) {
 
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
+
+    rankSourceSelect = p.createSelect();
+    rankSourceSelect.style('width', '150px');
+
+    rankSourceSelect.option('ESPN');
+    rankSourceSelect.option("SportingNews");
+    rankSourceSelect.selected('ESPN');
+
+    rankSourceSelect.changed(() => {
+      let value = rankSourceSelect.value();
+      boardData = boardDataMap.get(value);
+      console.log(value);
+    });
   };
 
 
@@ -40,6 +61,8 @@ registerSketch('sk5', function (p) {
     p.background(250);
     let midWidth = p.windowWidth / 2;
     let midHeight = p.windowHeight / 2;
+
+    rankSourceSelect.position(midWidth - 300, midHeight - 200);
 
     let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
     let correctPlayers = correctIncorrectSetArray[0];
