@@ -4,6 +4,9 @@ registerSketch('sk5', function (p) {
   const draftPlayerMap = new Map();
   const draftPlayerFree = new Set();
 
+  const correctPlayers = new Set();
+  const incorrectPlayers = new Set();
+
   let boardData;
   let draftData;
 
@@ -36,6 +39,26 @@ registerSketch('sk5', function (p) {
       }
     }
 
+    const seenPlayers = new Set();
+    for(let i = rankRange[0] - 1; i < rankRange[1]; i++) {
+      let playerName = boardData.getString(i, "Name");
+      let playerRank = boardData.getString(i, "Rank");
+      seenPlayers.add(playerName);
+      if(isCorrect(draftPlayerMap.get(playerName), playerRank)) {
+        correctPlayers.add(playerName);
+      } else {
+        incorrectPlayers.add(playerName);
+      }
+    }
+    draftPlayerFree.forEach(player => {
+      if(!seenPlayers.has(player)) {
+        incorrectPlayers.add(player);
+      }
+    });
+
+
+    console.log(incorrectPlayers);
+    console.log(correctPlayers);
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
   };
