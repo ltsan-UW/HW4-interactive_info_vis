@@ -16,20 +16,20 @@ registerSketch('sk5', function (p) {
   let numbersTextSize = 14;
   let lineWeight = 2;
   let graphLength = 800;
-  let graphHeight = 600;
+  let graphHeight = 800;
   let graphPositionOffsetX = 200;
-  let graphPositionOffsetY = 0;
+  let graphPositionOffsetY = 100;
   let sliderLength = graphLength / 2;
 
   let correctnessSlider;
 
   p.preload = function () {
-    boardData = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
+    boardData = p.loadTable('sketches/hw5assets/SN-2024.csv', 'csv', 'header');
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
   };
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(p.windowWidth, p.windowHeight + graphHeight);
 
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
@@ -49,13 +49,13 @@ registerSketch('sk5', function (p) {
 
 
     correctnessRange = correctnessSlider.value();
-    correctnessSlider.position(midWidth - sliderLength / 2, midHeight - graphHeight / 2);
+    correctnessSlider.position(midWidth - sliderLength / 2, midHeight - graphHeight / 2 + graphPositionOffsetY - 10);
     p.textAlign(p.RIGHT, p.CENTER);
-    p.text("0", midWidth - sliderLength / 2 + 10, midHeight - graphHeight / 2 - 30);
+    p.text("0", midWidth - sliderLength / 2 + 10, midHeight - graphHeight / 2 + graphPositionOffsetY - 40);
     p.textAlign(p.LEFT, p.CENTER);
-    p.text("20", midWidth + sliderLength / 2, midHeight - graphHeight / 2 - 30);
+    p.text("20", midWidth + sliderLength / 2, midHeight - graphHeight / 2 + graphPositionOffsetY - 40);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("when the difference is less than " + correctnessRange, midWidth, midHeight - graphHeight / 2 - 20);
+    p.text("when the difference is less than " + correctnessRange, midWidth, midHeight - graphHeight / 2 + graphPositionOffsetY - 30);
 
 
 
@@ -81,7 +81,10 @@ registerSketch('sk5', function (p) {
 
       let playerData = boardData.getRow(i);
       playerData = playerData.obj;
-      let draftPosition = draftPlayerMap.get(playerData.Name);
+      let draftPosition = "N/A";
+      if(draftPlayerMap.has(playerData.Name)) {
+        draftPosition = draftPlayerMap.get(playerData.Name);
+      }
       draftPlayerFree.delete(playerData.Name);
 
 
@@ -97,27 +100,34 @@ registerSketch('sk5', function (p) {
         p.fill(incorrectColor);
       }
 
-      if(draftPosition > rankRange[1]) {
+      let d;
+      if(draftPosition === "N/A" || draftPosition > rankRange[1]) {
         p.strokeWeight(lineWeight * 3);
         p.line(x + textPixelLineOffset + 2, y, x + textPixelLineOffset + 2, y);
         p.noStroke();
-        p.textSize(numbersTextSize * 0.7);
-        p.text(draftPosition, x + textPixelLineOffset + 12, y);
-        p.textSize(numbersTextSize);
+        if(draftPosition !== "N/A") {
+          p.textSize(numbersTextSize * 0.7);
+          p.text(draftPosition, x + textPixelLineOffset + 12, y);
+          p.textSize(numbersTextSize);
+        }
+        d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x + textPixelLineOffset, y);
       } else {
+        d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
         p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
       }
       p.noStroke();
       p.strokeWeight(lineWeight);
 
-      p.fill(textColor);
-      p.text(i + 1, x, y);
-      p.text(i + 1, x2, y);
-
-      let d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
       if (d < 4) {
         hoverData = [playerData.Name, boardRank, draftPosition];
       }
+
+      p.fill(textColor);
+      p.text(i + 1, x, y);
+      if(draftData.getRowCount() > i) {
+        p.text(i + 1, x2, y);
+      }
+
     }
 
     draftPlayerFree.forEach(player => {
