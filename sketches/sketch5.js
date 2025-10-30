@@ -4,9 +4,6 @@ registerSketch('sk5', function (p) {
   const draftPlayerMap = new Map();
   const draftPlayerFree = new Set();
 
-  const correctPlayers = new Set();
-  const incorrectPlayers = new Set();
-
   let boardData;
   let draftData;
 
@@ -34,33 +31,6 @@ registerSketch('sk5', function (p) {
   p.setup = function () {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    for(let i = 0; i < draftData.getRowCount(); i++) {
-      draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
-      if(i < rankRange[1]) {
-        draftPlayerFree.add(draftData.getString(i, "Player"));
-      }
-    }
-
-    const seenPlayers = new Set();
-    for(let i = rankRange[0] - 1; i < rankRange[1]; i++) {
-      let playerName = boardData.getString(i, "Name");
-      let playerRank = boardData.getString(i, "Rank");
-      seenPlayers.add(playerName);
-      if(isCorrect(draftPlayerMap.get(playerName), playerRank)) {
-        correctPlayers.add(playerName);
-      } else {
-        incorrectPlayers.add(playerName);
-      }
-    }
-    draftPlayerFree.forEach(player => {
-      if(!seenPlayers.has(player)) {
-        incorrectPlayers.add(player);
-      }
-    });
-
-
-    console.log(incorrectPlayers);
-    console.log(correctPlayers);
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
   };
@@ -70,6 +40,12 @@ registerSketch('sk5', function (p) {
     p.background(250);
     let midWidth = p.windowWidth / 2;
     let midHeight = p.windowHeight / 2;
+
+    let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
+    let correctPlayers = correctIncorrectSetArray[0];
+    let incorrectPlayers = correctIncorrectSetArray[1];
+    p.text("Correct Rankings: " + correctPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight);
+    p.text("Incorrect Rankings: " + incorrectPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 40);
 
 
     correctnessRange = correctnessSlider.value();
@@ -183,6 +159,34 @@ registerSketch('sk5', function (p) {
     rank1 = Number(rank1);
     rank2 = Number(rank2);
     return (rank1 + correctnessRange >= rank2 && rank1 - correctnessRange <= rank2)
+  }
+
+  function updateCorrectAndIncorrectPlayers() {
+    let correctPlayers = new Set();
+    let incorrectPlayers = new Set();
+    for(let i = 0; i < draftData.getRowCount(); i++) {
+      draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
+      if(i < rankRange[1]) {
+        draftPlayerFree.add(draftData.getString(i, "Player"));
+      }
+    }
+
+    const seenPlayers = new Set();
+    for(let i = rankRange[0] - 1; i < rankRange[1]; i++) {
+      let playerName = boardData.getString(i, "Name");
+      let playerRank = boardData.getString(i, "Rank");
+      seenPlayers.add(playerName);
+      if(isCorrect(draftPlayerMap.get(playerName), playerRank)) {
+        correctPlayers.add(playerName);
+      } else {
+        incorrectPlayers.add(playerName);
+      }
+    }
+    draftPlayerFree.forEach(player => {
+      if(!seenPlayers.has(player)) {
+        incorrectPlayers.add(player);
+      }});
+      return [correctPlayers, incorrectPlayers];
   }
 
   //written with AI
