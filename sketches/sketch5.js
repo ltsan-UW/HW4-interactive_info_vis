@@ -20,6 +20,8 @@ registerSketch('sk5', function (p) {
   let lineWeight = 2;
   let graphLength = 800;
   let graphHeight = 600;
+  let graphPositionOffsetX = 200;
+  let graphPositionOffsetY = 0;
   let sliderLength = graphLength / 2;
 
   let correctnessSlider;
@@ -65,12 +67,10 @@ registerSketch('sk5', function (p) {
 
 
   p.draw = function () {
-    let width = p.windowWidth;
-    let height = p.windowHeight;
+    p.background(250);
     let midWidth = p.windowWidth / 2;
     let midHeight = p.windowHeight / 2;
 
-    p.background(250);
 
     correctnessRange = correctnessSlider.value();
     correctnessSlider.position(midWidth - sliderLength / 2, midHeight - graphHeight / 2);
@@ -84,9 +84,11 @@ registerSketch('sk5', function (p) {
 
 
 
-    let yStart = midHeight - graphHeight / 2;
-    let yEnd = midHeight + graphHeight / 2;
+    let yStart = midHeight - graphHeight / 2 + graphPositionOffsetY;
+    let yEnd = midHeight + graphHeight / 2 + graphPositionOffsetY;
     let distanceBetweenRanks = 3; // graphLength / number
+    let x = midWidth - graphLength / distanceBetweenRanks + graphPositionOffsetX;
+    let x2 = midWidth + graphLength / distanceBetweenRanks + graphPositionOffsetX;
     let textPixelLineOffset = 10;
 
     p.fill(textColor);
@@ -98,8 +100,6 @@ registerSketch('sk5', function (p) {
     let hoverData = [];
 
     for(let i = 0; i < rankRange[1]; i++) {
-      let x = midWidth - graphLength / distanceBetweenRanks;
-      let x2 = midWidth + graphLength / distanceBetweenRanks;
 
       let boardRank = boardData.getString(i, "Rank");
 
@@ -147,17 +147,16 @@ registerSketch('sk5', function (p) {
     draftPlayerFree.forEach(player => {
       let draftPosition = draftPlayerMap.get(player);
       let y = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
-      let x = midWidth + graphLength / distanceBetweenRanks;
       p.fill(incorrectColor);
       p.textSize(numbersTextSize * 0.7);
       p.textSize(numbersTextSize);
       p.fill(textColor);
       p.stroke(incorrectColor);
       p.strokeWeight(lineWeight * 3);
-      p.line(x - textPixelLineOffset - 2, y, x - textPixelLineOffset - 2, y);
+      p.line(x2 - textPixelLineOffset - 2, y, x2 - textPixelLineOffset - 2, y);
       p.strokeWeight(lineWeight);
       p.noStroke();
-      let d = pointLineDistance(p.mouseX, p.mouseY, x - textPixelLineOffset - 2, y, x - textPixelLineOffset - 2, y);
+      let d = pointLineDistance(p.mouseX, p.mouseY, x2 - textPixelLineOffset - 2, y, x2 - textPixelLineOffset - 2, y);
       if (d < 4) {
         hoverData = [player, "N/A", draftPosition];
       }
