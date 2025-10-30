@@ -52,7 +52,6 @@ registerSketch('sk5', function (p) {
     rankSourceSelect.changed(() => {
       let value = rankSourceSelect.value();
       boardData = boardDataMap.get(value);
-      console.log(value);
     });
   };
 
@@ -67,8 +66,12 @@ registerSketch('sk5', function (p) {
     let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
     let correctPlayers = correctIncorrectSetArray[0];
     let incorrectPlayers = correctIncorrectSetArray[1];
-    p.text("Correct Rankings: " + correctPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight);
-    p.text("Incorrect Rankings: " + incorrectPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 40);
+    let missedPlayers = correctIncorrectSetArray[2];
+    let accuracy = Math.floor(correctIncorrectSetArray[3] * 10) / 10;
+    p.text("Correct Players: " + correctPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 120);
+    p.text("Incorrect Players: " + incorrectPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 80);
+    p.text("Missed Players: " + missedPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 40);
+    p.text("Accuracy: +/- " + accuracy + " spots per Player", midWidth - graphPositionOffsetX - 30, midHeight);
 
 
     correctnessRange = correctnessSlider.value();
@@ -79,8 +82,6 @@ registerSketch('sk5', function (p) {
     p.text("20", midWidth + sliderLength / 2, midHeight - graphHeight / 2 + graphPositionOffsetY - 40);
     p.textAlign(p.CENTER, p.CENTER);
     p.text("when the difference is less than " + correctnessRange, midWidth, midHeight - graphHeight / 2 + graphPositionOffsetY - 30);
-
-
 
 
     let yStart = midHeight - graphHeight / 2 + graphPositionOffsetY;
@@ -197,6 +198,8 @@ registerSketch('sk5', function (p) {
   function updateCorrectAndIncorrectPlayers() {
     let correctPlayers = new Set();
     let incorrectPlayers = new Set();
+    let missedPlayers = new Set();
+    let accuracy = 0;
     for(let i = 0; i < draftData.getRowCount(); i++) {
       draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
       if(i < rankRange[1]) {
@@ -209,6 +212,7 @@ registerSketch('sk5', function (p) {
       let playerName = boardData.getString(i, "Name");
       let playerRank = boardData.getString(i, "Rank");
       seenPlayers.add(playerName);
+      accuracy += Math.abs(draftPlayerMap.get(playerName) - playerRank);
       if(isCorrect(draftPlayerMap.get(playerName), playerRank)) {
         correctPlayers.add(playerName);
       } else {
@@ -217,9 +221,10 @@ registerSketch('sk5', function (p) {
     }
     draftPlayerFree.forEach(player => {
       if(!seenPlayers.has(player)) {
-        incorrectPlayers.add(player);
+        missedPlayers.add(player);
       }});
-      return [correctPlayers, incorrectPlayers];
+    accuracy /= rankRange[1];
+    return [correctPlayers, incorrectPlayers, missedPlayers, accuracy];
   }
 
   //written with AI
