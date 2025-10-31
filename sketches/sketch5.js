@@ -1,4 +1,8 @@
-// Example 2
+
+// Ideas:
+//  - NBA headshots next to the ranking for visual hook
+//  - Big social media headline text
+//  - biggest change / drop
 registerSketch('sk5', function (p) {
 
   const draftPlayerMap = new Map();
@@ -6,7 +10,6 @@ registerSketch('sk5', function (p) {
 
   let boardData;
   let draftData;
-
 
   const boardDataMap = new Map();
 
@@ -34,6 +37,7 @@ registerSketch('sk5', function (p) {
     boardDataMap.set("SportingNews", SN);
     boardData = ESPN;
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
+    console.log("draftData loaded in preload");
   };
 
   p.setup = function () {
@@ -53,25 +57,37 @@ registerSketch('sk5', function (p) {
       let value = rankSourceSelect.value();
       boardData = boardDataMap.get(value);
     });
+
+
   };
 
 
   p.draw = function () {
     p.background(250);
     let midWidth = p.windowWidth / 2;
+    let fourthWidth = p.windowWidth / 4;
     let midHeight = p.windowHeight / 2;
 
-    rankSourceSelect.position(midWidth - 300, midHeight - 200);
+
+    p.text("2024 NBA Draft: Media Rankings vs. Real Results", midWidth, 200);
+
+    if(!draftData) {
+      console.log("loading data");
+    } else {
+    rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, midHeight - 200);
 
     let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
     let correctPlayers = correctIncorrectSetArray[0];
     let incorrectPlayers = correctIncorrectSetArray[1];
     let missedPlayers = correctIncorrectSetArray[2];
     let accuracy = Math.floor(correctIncorrectSetArray[3] * 10) / 10;
-    p.text("Correct Players: " + correctPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 120);
-    p.text("Incorrect Players: " + incorrectPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 80);
-    p.text("Missed Players: " + missedPlayers.size, midWidth - graphPositionOffsetX - 30, midHeight - 40);
-    p.text("Accuracy: +/- " + accuracy + " spots per Player", midWidth - graphPositionOffsetX - 30, midHeight);
+    p.text("Correct Players: " + correctPlayers.size, fourthWidth, midHeight - 120);
+    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, midHeight - 80);
+    p.text("Missed Players: " + missedPlayers.size, fourthWidth, midHeight - 40);
+    p.text("Accuracy: +/- " + accuracy + " spots per Player", fourthWidth, midHeight);
+    drawBarGraph(fourthWidth, midHeight + 20, 100, 30, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+
+
 
 
     correctnessRange = correctnessSlider.value();
@@ -174,20 +190,38 @@ registerSketch('sk5', function (p) {
 
 
     if(hoverData.length !== 0) {
-      let box = [200, 100];
-      p.fill("white");
-      p.stroke("lightgrey");
-      p.rect(p.mouseX - box[0] / 2, p.mouseY - 20 - box[0] / 2, box[0], box[1]);
-      p.line(p.mouseX, p.mouseY, p.mouseX, p.mouseY - 20);
-      p.noStroke();
-      p.fill(textColor);
-      p.text(hoverData[0], p.mouseX, p.mouseY - 20 - box[0] / 2 + 15);
-      p.text("Rank: " + hoverData[1], p.mouseX - 40, p.mouseY - 20 - box[0] / 2 + 40);
-      p.text("Pick: " + hoverData[2], p.mouseX + 40, p.mouseY - 20 - box[0] / 2 + 40);
+      drawHoverBox(hoverData);
     }
+  }
 
   }
 
+  function drawHoverBox(hoverData) {
+    let box = [200, 100];
+    p.fill("white");
+    p.stroke("lightgrey");
+    p.rect(p.mouseX - box[0] / 2, p.mouseY - 20 - box[0] / 2, box[0], box[1]);
+    p.line(p.mouseX, p.mouseY, p.mouseX, p.mouseY - 20);
+    p.noStroke();
+    p.fill(textColor);
+    p.text(hoverData[0], p.mouseX, p.mouseY - 20 - box[0] / 2 + 15);
+    p.text("Rank: " + hoverData[1], p.mouseX - 40, p.mouseY - 20 - box[0] / 2 + 40);
+    p.text("Pick: " + hoverData[2], p.mouseX + 40, p.mouseY - 20 - box[0] / 2 + 40);
+  }
+
+  function drawBarGraph(x, y, length, height, miss, inc, cor, max) {
+    let correctBarLength = p.map(cor.size, 0, max, 0, length);
+    let incorrectBarLength = p.map(inc.size, 0, max, 0, length);
+    let missingBarLength = p.map(miss.size, 0, max, 0, length);
+    p.fill("green");
+    p.rect(x + 1, y, correctBarLength, height);
+    p.fill("red");
+    p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
+    p.fill("darkred");
+    p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
+    p.fill("black");
+    p.rect(x - 1, y, 2, height);
+  }
 
   function isCorrect(rank1, rank2) {
     rank1 = Number(rank1);
