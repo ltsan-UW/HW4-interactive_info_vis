@@ -21,10 +21,10 @@ registerSketch('sk5', function (p) {
   let incorrectColor = "red"
   let numbersTextSize = 14;
   let lineWeight = 2;
-  let graphLength = 800;
-  let graphHeight = 700;
-  let graphPositionOffsetX = 200;
-  let graphPositionOffsetY = 100;
+  let graphLength = 400;
+  let graphHeight = 600;
+  let graphPositionOffsetX = 0;
+  let graphPositionOffsetY = 140;
   let sliderLength = 200;
 
   let correctnessSlider;
@@ -42,7 +42,7 @@ registerSketch('sk5', function (p) {
   };
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight + graphHeight);
+    p.createCanvas(p.windowWidth, graphHeight + 150);
 
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
@@ -67,58 +67,69 @@ registerSketch('sk5', function (p) {
   p.draw = function () {
     p.background(250);
     let midWidth = p.windowWidth / 2;
-    let fourthWidth = p.windowWidth / 4;
+    let fourthWidth = p.windowWidth / 2 - graphLength / 2;
     let midHeight = p.windowHeight / 2;
 
 
+    //title
+    p.textStyle(p.BOLD);
     p.textSize(30);
-    p.text("2024 NBA Draft: Media Rankings vs. Real Results", midWidth, 60);
+    p.text("2024 NBA Draft: Media Rankings vs. Draft Positions", midWidth, 40);
+    p.textSize(22);
+    p.text("Can we trust sports media?", midWidth, 75);
     p.textSize(16);
+    p.textStyle(p.NORMAL);
 
     if(!draftData) {
       console.log("loading data");
     } else {
 
-    p.text("Rank Source", fourthWidth, 120);
-    rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, 190);
 
+    let infoY = 150;
     let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
     let correctPlayers = correctIncorrectSetArray[0];
     let incorrectPlayers = correctIncorrectSetArray[1];
     let missedPlayers = correctIncorrectSetArray[2];
     let accuracy = Math.floor(correctIncorrectSetArray[3] * 10) / 10;
     let percentage = Math.floor(correctIncorrectSetArray[4] * 100);
-    p.text("Correct Players: " + correctPlayers.size, fourthWidth, 340);
-    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, 360);
-    p.text("Missed Players: " + missedPlayers.size, fourthWidth, 380);
-    p.text("Accuracy: +/- " + accuracy + " spots per Player", fourthWidth, 400);
-    p.text(percentage + "% of guesses are correct", fourthWidth, 420)
-    drawBarGraph(fourthWidth, 440, 100, 30, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+    p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 40);
+    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 60);
+    p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 80);
+    p.textSize(25);
+    p.textStyle(p.ITALIC);
+    p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
+    p.textStyle(p.NORMAL);
+    p.textSize(16);
+    p.text("Accuracy: +/- " + accuracy + " spots per Player", fourthWidth, infoY + 120);
+    drawBarGraph(fourthWidth, infoY + 140, 100, 30, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
 
 
-
-
+    let interactY = 600;
     correctnessRange = correctnessSlider.value();
-    correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, 250);
+    correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
     p.textAlign(p.RIGHT, p.CENTER);
-    p.text("0", fourthWidth - sliderLength / 2 + 10, 250 - 30);
+    p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 30);
     p.textAlign(p.LEFT, p.CENTER);
-    p.text("20", fourthWidth + sliderLength / 2, 250 - 30);
+    p.text("20", fourthWidth + sliderLength / 2, interactY - 30);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("when the difference is less than " + correctnessRange, fourthWidth, 180);
+    p.text("when the difference is less than " + correctnessRange, fourthWidth, interactY - 70);
+
+    p.text("Rank Source", fourthWidth, interactY - 130);
+    rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, interactY - 60);
 
 
-    let yStart = midHeight - graphHeight / 2 + graphPositionOffsetY;
-    let yEnd = midHeight + graphHeight / 2 + graphPositionOffsetY;
-    let distanceBetweenRanks = 3; // graphLength / number
-    let x = midWidth - graphLength / distanceBetweenRanks + graphPositionOffsetX;
-    let x2 = midWidth + graphLength / distanceBetweenRanks + graphPositionOffsetX;
+    let yStart = graphPositionOffsetY;
+    let yEnd = graphHeight + graphPositionOffsetY;
+    let x = midWidth + graphPositionOffsetX;
+    let x2 = midWidth + graphLength + graphPositionOffsetX;
     let textPixelLineOffset = 12;
 
     p.fill(textColor);
     p.textSize(numbersTextSize);
     p.textAlign(p.CENTER, p.CENTER);
     p.strokeWeight(lineWeight);
+    p.text("Media Rankings", x, yStart - 20);
+    p.text("Draft Positions", x2, yStart - 20);
 
 
     let hoverData = [];
