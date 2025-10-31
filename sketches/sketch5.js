@@ -32,11 +32,15 @@ registerSketch('sk5', function (p) {
 
 
   p.preload = function () {
-    let ESPN = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
-    let SN = p.loadTable('sketches/hw5assets/SN-2024.csv', 'csv', 'header');
-    boardDataMap.set("ESPN", ESPN);
-    boardDataMap.set("SportingNews", SN);
-    boardData = ESPN;
+    let ESPNB = p.loadTable('sketches/hw5assets/ESPN-BOARD-2024.csv', 'csv', 'header');
+    let SNB = p.loadTable('sketches/hw5assets/SN-BOARD-2024.csv', 'csv', 'header');
+    let TRM = p.loadTable('sketches/hw5assets/TR-MOCK-2024.csv', 'csv', 'header');
+    let TRB = p.loadTable('sketches/hw5assets/TR-BOARD-2024.csv', 'csv', 'header');
+    boardDataMap.set("ESPN - Top Players", ESPNB);
+    boardDataMap.set("SportingNews - Top Players", SNB);
+    boardDataMap.set("The Ringer - Mock Draft", TRM);
+    boardDataMap.set("The Ringer - Top Players", TRB);
+    boardData = ESPNB;
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
     console.log("draftData loaded in preload");
   };
@@ -50,9 +54,11 @@ registerSketch('sk5', function (p) {
     rankSourceSelect = p.createSelect();
     rankSourceSelect.style('width', '150px');
 
-    rankSourceSelect.option('ESPN');
-    rankSourceSelect.option("SportingNews");
-    rankSourceSelect.selected('ESPN');
+    rankSourceSelect.option('ESPN - Top Players');
+    rankSourceSelect.option("SportingNews - Top Players");
+    rankSourceSelect.option("The Ringer - Mock Draft");
+    rankSourceSelect.option("The Ringer - Top Players");
+    rankSourceSelect.selected('ESPN - Top Players');
 
     rankSourceSelect.changed(() => {
       let value = rankSourceSelect.value();
