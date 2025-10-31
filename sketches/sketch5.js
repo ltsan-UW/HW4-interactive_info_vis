@@ -25,10 +25,11 @@ registerSketch('sk5', function (p) {
   let graphHeight = 700;
   let graphPositionOffsetX = 200;
   let graphPositionOffsetY = 100;
-  let sliderLength = graphLength / 2;
+  let sliderLength = 200;
 
   let correctnessSlider;
   let rankSourceSelect;
+
 
   p.preload = function () {
     let ESPN = p.loadTable('sketches/hw5assets/ESPN-2024.csv', 'csv', 'header');
@@ -58,6 +59,7 @@ registerSketch('sk5', function (p) {
       boardData = boardDataMap.get(value);
     });
 
+    p.textFont('lato');
 
   };
 
@@ -69,35 +71,41 @@ registerSketch('sk5', function (p) {
     let midHeight = p.windowHeight / 2;
 
 
-    p.text("2024 NBA Draft: Media Rankings vs. Real Results", midWidth, 200);
+    p.textSize(30);
+    p.text("2024 NBA Draft: Media Rankings vs. Real Results", midWidth, 60);
+    p.textSize(16);
 
     if(!draftData) {
       console.log("loading data");
     } else {
-    rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, midHeight - 200);
+
+    p.text("Rank Source", fourthWidth, 120);
+    rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, 190);
 
     let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
     let correctPlayers = correctIncorrectSetArray[0];
     let incorrectPlayers = correctIncorrectSetArray[1];
     let missedPlayers = correctIncorrectSetArray[2];
     let accuracy = Math.floor(correctIncorrectSetArray[3] * 10) / 10;
-    p.text("Correct Players: " + correctPlayers.size, fourthWidth, midHeight - 120);
-    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, midHeight - 80);
-    p.text("Missed Players: " + missedPlayers.size, fourthWidth, midHeight - 40);
-    p.text("Accuracy: +/- " + accuracy + " spots per Player", fourthWidth, midHeight);
-    drawBarGraph(fourthWidth, midHeight + 20, 100, 30, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+    let percentage = Math.floor(correctIncorrectSetArray[4] * 100);
+    p.text("Correct Players: " + correctPlayers.size, fourthWidth, 340);
+    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, 360);
+    p.text("Missed Players: " + missedPlayers.size, fourthWidth, 380);
+    p.text("Accuracy: +/- " + accuracy + " spots per Player", fourthWidth, 400);
+    p.text(percentage + "% of guesses are correct", fourthWidth, 420)
+    drawBarGraph(fourthWidth, 440, 100, 30, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
 
 
 
 
     correctnessRange = correctnessSlider.value();
-    correctnessSlider.position(midWidth - sliderLength / 2, midHeight - graphHeight / 2 + graphPositionOffsetY - 10);
+    correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, 250);
     p.textAlign(p.RIGHT, p.CENTER);
-    p.text("0", midWidth - sliderLength / 2 + 10, midHeight - graphHeight / 2 + graphPositionOffsetY - 40);
+    p.text("0", fourthWidth - sliderLength / 2 + 10, 250 - 30);
     p.textAlign(p.LEFT, p.CENTER);
-    p.text("20", midWidth + sliderLength / 2, midHeight - graphHeight / 2 + graphPositionOffsetY - 40);
+    p.text("20", fourthWidth + sliderLength / 2, 250 - 30);
     p.textAlign(p.CENTER, p.CENTER);
-    p.text("when the difference is less than " + correctnessRange, midWidth, midHeight - graphHeight / 2 + graphPositionOffsetY - 30);
+    p.text("when the difference is less than " + correctnessRange, fourthWidth, 180);
 
 
     let yStart = midHeight - graphHeight / 2 + graphPositionOffsetY;
@@ -105,7 +113,7 @@ registerSketch('sk5', function (p) {
     let distanceBetweenRanks = 3; // graphLength / number
     let x = midWidth - graphLength / distanceBetweenRanks + graphPositionOffsetX;
     let x2 = midWidth + graphLength / distanceBetweenRanks + graphPositionOffsetX;
-    let textPixelLineOffset = 10;
+    let textPixelLineOffset = 12;
 
     p.fill(textColor);
     p.textSize(numbersTextSize);
@@ -258,7 +266,8 @@ registerSketch('sk5', function (p) {
         missedPlayers.add(player);
       }});
     accuracy /= rankRange[1];
-    return [correctPlayers, incorrectPlayers, missedPlayers, accuracy];
+    let perc = correctPlayers.size / (correctPlayers.size + incorrectPlayers.size + missedPlayers.size);
+    return [correctPlayers, incorrectPlayers, missedPlayers, accuracy, perc];
   }
 
   //written with AI
