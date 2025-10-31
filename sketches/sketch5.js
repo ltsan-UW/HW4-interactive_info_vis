@@ -4,13 +4,14 @@
 //  - Big social media headline text
 //  - biggest change / drop
 //  - make the sources a list that shows the bar graph, accuracy, % for each, sorted by the most accurate
+//  - commonly incorrect players, or commonly missed players maybe?
 registerSketch('sk5', function (p) {
 
   const draftPlayerMap = new Map();
   const draftPlayerFree = new Set();
 
-  let boardData;
-  let draftData;
+  let boardData = null;
+  let draftData = null;
 
   const boardDataMap = new Map();
 
@@ -48,13 +49,6 @@ registerSketch('sk5', function (p) {
     boardData = ESPNM;
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
     console.log("draftData loaded in preload");
-  };
-
-  p.setup = function () {
-    p.createCanvas(p.windowWidth, graphHeight + 150);
-
-    correctnessSlider = p.createSlider(0, 20, correctnessRange);
-    correctnessSlider.style('width', sliderLength + "px");
 
     rankSourceSelect = p.createSelect();
     rankSourceSelect.style('width', '150px');
@@ -67,6 +61,14 @@ registerSketch('sk5', function (p) {
       let value = rankSourceSelect.value();
       boardData = boardDataMap.get(value);
     });
+  };
+
+  p.setup = function () {
+    p.createCanvas(p.windowWidth, graphHeight + 150);
+
+    correctnessSlider = p.createSlider(0, 20, correctnessRange);
+    correctnessSlider.style('width', sliderLength + "px");
+
 
     p.textFont('lato');
 
@@ -80,6 +82,11 @@ registerSketch('sk5', function (p) {
     let midHeight = p.windowHeight / 2;
 
 
+
+    if(draftData === null || boardData === null || draftData.getRowCount() === 0 || boardData.getRowCount() === 0) {
+      console.log("loading data");
+    } else {
+
     //title
     p.textStyle(p.BOLD);
     p.textSize(30);
@@ -88,11 +95,6 @@ registerSketch('sk5', function (p) {
     p.text("Can we trust sports media?", midWidth, 75);
     p.textSize(16);
     p.textStyle(p.NORMAL);
-
-    if(!draftData) {
-      console.log("loading data");
-    } else {
-
 
     let infoY = 150;
     let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
