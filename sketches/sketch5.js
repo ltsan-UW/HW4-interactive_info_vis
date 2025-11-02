@@ -16,7 +16,7 @@ registerSketch('sk5', function (p) {
   const boardDataMap = new Map();
 
   let correctnessRange = 3;
-  let rankRange = [1,58];
+  let rankRange = [1,30];
 
   let textColor = "black"
   let correctColor = "green"
@@ -25,7 +25,7 @@ registerSketch('sk5', function (p) {
   let numbersTextSize = 14;
   let lineWeight = 2;
   let graphLength = 400;
-  let graphHeight = 900;
+  let graphHeight = 600;
   let graphPositionOffsetX = 0;
   let graphPositionOffsetY = 140;
   let sliderLength = 200;
@@ -110,10 +110,10 @@ registerSketch('sk5', function (p) {
     p.textSize(25);
     p.textStyle(p.ITALIC);
     p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
-    p.textStyle(p.NORMAL);
-    p.textSize(16);
-    p.text("Accuracy: +/- " + accuracy + " spots per Player", fourthWidth, infoY + 120);
-    drawBarGraph(fourthWidth, infoY + 140, 100, 30, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+
+
+
+    drawSourceStats(fourthWidth, 140 + infoY, 30, missedPlayers, incorrectPlayers, correctPlayers, accuracy, percentage)
 
 
     let interactY = 600;
@@ -225,6 +225,18 @@ registerSketch('sk5', function (p) {
     }
   }
 
+  }
+
+  function drawSourceStats(x, y, barHeight, missedPlayers, incorrectPlayers, correctPlayers, accuracy, percentage) {
+    p.textStyle(p.NORMAL);
+    p.textSize(16);
+    drawBarGraph(x, y + 3, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+    p.textSize(20);
+    p.text("ESPN", x - 150, y + barHeight / 3);
+    p.textSize(14);
+    p.text("+/- " + accuracy , x + 140, y + 8);
+    p.text(percentage + "%" , x + 140, y + barHeight - 2);
+    p.text("Mock Draft", x - 150, y + barHeight - 2);
   }
 
   function drawHoverBox(hoverData) {
