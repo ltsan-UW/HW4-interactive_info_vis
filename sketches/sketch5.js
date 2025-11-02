@@ -65,7 +65,7 @@ registerSketch('sk5', function (p) {
   };
 
   p.setup = function () {
-    p.createCanvas(p.windowWidth, graphHeight + 150);
+    p.createCanvas(p.windowWidth, graphHeight + 250);
 
     correctnessSlider = p.createSlider(0, 20, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
@@ -104,24 +104,28 @@ registerSketch('sk5', function (p) {
     let missedPlayers = playerSets[2];
     let accuracy = playerSets[3];
     let percentage = playerSets[4];
-    p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 40);
-    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 60);
-    p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 80);
+    p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 30);
+    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 50);
+    p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 70);
     p.textSize(25);
     p.textStyle(p.ITALIC);
     p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
 
-    let barHeight = 35;
-    drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
+    //drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
 
     let option = "The Ringer - Mock Draft";
-    let playerSets2 = getPlayerSets(boardDataMap.get(option));
-    drawSourceStats(fourthWidth, 200 + infoY, barHeight, playerSets2, option);
 
 
 
+    let barHeight = 35;
+    let ySpacing = 60
+    boardDataMap.keys().forEach((option) => {
+      let playerSets2 = getPlayerSets(boardDataMap.get(option));
+      drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets2, option);
+      ySpacing += 60;
+    })
 
-    let interactY = 600;
+    let interactY = 750;
     correctnessRange = correctnessSlider.value();
     correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
     p.textAlign(p.RIGHT, p.CENTER);
@@ -243,11 +247,11 @@ registerSketch('sk5', function (p) {
     p.textSize(16);
     drawBarGraph(x, y + 3, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
     p.textSize(20);
-    p.text(nameParts[0], x - 150, y + barHeight / 3);
+    p.text(nameParts[0], x - 180, y + barHeight / 3);
     p.textSize(14);
     p.text("+/- " + accuracy , x + 140, y + 8);
     p.text(percentage + "%" , x + 140, y + barHeight - 2);
-    p.text(nameParts[1], x - 150, y + barHeight - 2);
+    p.text(nameParts[1], x - 180, y + barHeight - 2);
   }
 
   function drawHoverBox(hoverData) {
