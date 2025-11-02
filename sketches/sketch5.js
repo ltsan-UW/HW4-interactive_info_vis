@@ -25,6 +25,8 @@ registerSketch('sk5', function (p) {
   let correctColor = "green"
   let incorrectColor = "red"
   let missedColor = "darkred"
+  let backgroundColor = "beige";
+
   let numbersTextSize = 14;
   let lineWeight = 2;
   let graphLength = 400;
@@ -84,7 +86,7 @@ registerSketch('sk5', function (p) {
 
 
   p.draw = function () {
-    p.background(250);
+    p.background(backgroundColor);
     let midWidth = p.windowWidth / 2;
     let fourthWidth = p.windowWidth / 2 - graphLength / 2;
     let midHeight = p.windowHeight / 2;
@@ -124,7 +126,7 @@ registerSketch('sk5', function (p) {
       //let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
 
       let sourcesY = 220;
-      let barHeight = 35;
+      let barHeight = 30;
       let ySpacing = 50;
       let startSpacing = ySpacing;
       let totalStats = [0, 0, 0, 0, 0];
@@ -357,26 +359,26 @@ registerSketch('sk5', function (p) {
     // p.stroke("black");
     // p.rect(x - length, y - 1, length * 2, height + 2);
     // p.noStroke();
-    p.textSize(14);
+    p.textSize(12);
     let correctBarLength = p.map(cor.size, 0, max, 0, length);
     let incorrectBarLength = p.map(inc.size, 0, max, 0, length);
     let missingBarLength = p.map(miss.size, 0, max, 0, length);
-    p.fill("green");
+    p.fill(correctColor);
     p.rect(x + 1, y, correctBarLength, height);
     p.text(cor.size, x + correctBarLength + 12, y + height / 2);
     if (miss.size !== 0) {
-      p.fill("red");
+      p.fill(incorrectColor);
       p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
       p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
-      p.fill("darkred");
+      p.fill(missedColor);
       p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
       p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
     } else {
-      p.fill("red");
+      p.fill(incorrectColor);
       p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
       p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 2);
     }
-    p.fill("black");
+    p.fill(textColor);
     p.rect(x - 1, y, 2, height);
     p.textSize(16);
   }
@@ -439,7 +441,7 @@ registerSketch('sk5', function (p) {
 
         // Check if we've drawn all 'max' points
         if (pointCount > max) {
-          p.fill('white');
+          p.fill(backgroundColor);
         } else {
           // Determine the color based on the counts
           if (pointCount <= cor) {
@@ -453,7 +455,7 @@ registerSketch('sk5', function (p) {
             p.fill(missedColor);
           } else {
             // All accounted points have been drawn, use the unused color
-            p.fill('white');
+            p.fill(backgroundColor);
           }
         }
 
