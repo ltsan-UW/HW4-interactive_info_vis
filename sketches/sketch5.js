@@ -121,7 +121,8 @@ registerSketch('sk5', function (p) {
     let ySpacing = 60
     boardDataMap.keys().forEach((option) => {
       let playerSets2 = getPlayerSets(boardDataMap.get(option));
-      drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets2, option);
+      let isSelected = (option === rankSourceSelect.value());
+      drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets2, option, isSelected);
       ySpacing += 60;
     })
 
@@ -236,7 +237,7 @@ registerSketch('sk5', function (p) {
 
   }
 
-  function drawSourceStats(x, y, barHeight, playerSets, sourceName) {
+  function drawSourceStats(x, y, barHeight, playerSets, sourceName, isSelected) {
     let nameParts = sourceName.split(" - ");
     let correctPlayers = playerSets[0];
     let incorrectPlayers = playerSets[1];
@@ -252,6 +253,10 @@ registerSketch('sk5', function (p) {
     p.text("+/- " + accuracy , x + 140, y + 8);
     p.text(percentage + "%" , x + 140, y + barHeight - 2);
     p.text(nameParts[1], x - 180, y + barHeight - 2);
+    if(isSelected) {
+      p.rect(x - 250, y + 3, 2, barHeight);
+      p.text("selected", x - 250 - 40, y + barHeight / 2);
+    }
   }
 
   function drawHoverBox(hoverData) {
