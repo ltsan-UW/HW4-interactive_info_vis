@@ -126,7 +126,7 @@ registerSketch('sk5', function (p) {
       //let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
 
       let sourcesY = 220;
-      let barHeight = 30;
+      let barHeight = 10;
       let ySpacing = 50;
       let startSpacing = ySpacing;
       let totalStats = [0, 0, 0, 0, 0];
@@ -317,6 +317,7 @@ registerSketch('sk5', function (p) {
   }
 
   function drawSourceStats(x, y, barHeight, playerSets, sourceName, isSelected) {
+    let height = 30;
     let nameParts = sourceName.split(" - ");
     let correctPlayers = playerSets[0];
     let incorrectPlayers = playerSets[1];
@@ -326,19 +327,19 @@ registerSketch('sk5', function (p) {
     if (isSelected) {
       p.noStroke();
       p.fill('lightgrey')
-      p.rect(x - 240, y - 2, 440, barHeight + 10);
+      p.rect(x - 240, y - 2, 440, height + 10);
       p.fill('black');
-      p.rect(x - 240, y - 2, 2, barHeight + 10);
+      p.rect(x - 240, y - 2, 2, height + 10);
     }
     p.textStyle(p.NORMAL);
     p.textSize(14);
-    drawBarGraph(x, y + 3, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+    drawBarGraph(x, y - 2 + height / 2, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
     p.textSize(16);
-    p.text(nameParts[0], x - 180, y + barHeight / 3);
+    p.text(nameParts[0], x - 180, y + height / 3);
     p.textSize(12);
     p.text("+/- " + accuracy, x + 140, y + 12);
-    p.text(percentage + "%", x + 140, y + barHeight - 6);
-    p.text(nameParts[1], x - 180, y + barHeight - 2);
+    p.text(percentage + "%", x + 140, y + height - 6);
+    p.text(nameParts[1], x - 180, y + height - 2);
   }
 
   function drawHoverBox(hoverData) {
@@ -369,10 +370,10 @@ registerSketch('sk5', function (p) {
     if (miss.size !== 0) {
       p.fill(incorrectColor);
       p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
-      p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
+      p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y);
       p.fill(missedColor);
       p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
-      p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
+      p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y  + 14);
     } else {
       p.fill(incorrectColor);
       p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
