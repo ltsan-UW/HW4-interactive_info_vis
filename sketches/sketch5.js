@@ -19,7 +19,7 @@ registerSketch('sk5', function (p) {
   const boardDataMap = new Map();
 
   let correctnessRange = 3;
-  let rankRange = [1, 30];
+  let rankRange = [1, 35];
 
   let textColor = "black"
   let correctColor = "green"
@@ -44,9 +44,11 @@ registerSketch('sk5', function (p) {
     let TRM = p.loadTable('sketches/hw5assets/TR-MOCK-2024.csv', 'csv', 'header');
     let ESPNM = p.loadTable('sketches/hw5assets/ESPN-MOCK-2024.csv', 'csv', 'header');
     let SNM = p.loadTable('sketches/hw5assets/SN-MOCK-2024.csv', 'csv', 'header');
+    let TANKM = p.loadTable('sketches/hw5assets/TANK-MOCK-2024.csv', 'csv', 'header');
     boardDataMap.set("ESPN - Mock Draft", ESPNM);
     boardDataMap.set("SportingNews - Mock Draft", SNM);
     boardDataMap.set("The Ringer - Mock Draft", TRM);
+    boardDataMap.set("Tankathon - Mock Draft", TANKM);
     // boardDataMap.set("ESPN - Top Players", ESPNB);
     // boardDataMap.set("SportingNews - Top Players", SNB);
     // boardDataMap.set("The Ringer - Top Players", TRB);
