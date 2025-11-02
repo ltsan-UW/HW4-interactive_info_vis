@@ -5,10 +5,13 @@
 //  - biggest change / drop
 //  - make the sources a list that shows the bar graph, accuracy, % for each, sorted by the most accurate
 //  - commonly incorrect players, or commonly missed players maybe?
+//  - fix right side out of range like AJ Johnson should show up
 registerSketch('sk5', function (p) {
 
   const draftPlayerMap = new Map();
   const draftPlayerFree = new Set();
+
+  const boardPlayerMap = new Map();
 
   let boardData = null;
   let draftData = null;
@@ -16,7 +19,7 @@ registerSketch('sk5', function (p) {
   const boardDataMap = new Map();
 
   let correctnessRange = 3;
-  let rankRange = [1,30];
+  let rankRange = [1, 30];
 
   let textColor = "black"
   let correctColor = "green"
@@ -44,12 +47,13 @@ registerSketch('sk5', function (p) {
     boardDataMap.set("ESPN - Mock Draft", ESPNM);
     boardDataMap.set("SportingNews - Mock Draft", SNM);
     boardDataMap.set("The Ringer - Mock Draft", TRM);
-    boardDataMap.set("ESPN - Top Players", ESPNB);
-    boardDataMap.set("SportingNews - Top Players", SNB);
-    boardDataMap.set("The Ringer - Top Players", TRB);
+    // boardDataMap.set("ESPN - Top Players", ESPNB);
+    // boardDataMap.set("SportingNews - Top Players", SNB);
+    // boardDataMap.set("The Ringer - Top Players", TRB);
     boardData = ESPNM;
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
     console.log("draftData loaded in preload");
+
 
     rankSourceSelect = p.createSelect();
     rankSourceSelect.style('width', '150px');
@@ -61,6 +65,7 @@ registerSketch('sk5', function (p) {
     rankSourceSelect.changed(() => {
       let value = rankSourceSelect.value();
       boardData = boardDataMap.get(value);
+      createBoardMap(boardData);
     });
   };
 
@@ -84,165 +89,198 @@ registerSketch('sk5', function (p) {
 
 
 
-    if(draftData === null || boardData === null || draftData.getRowCount() === 0 || boardData.getRowCount() === 0) {
+    if (draftData === null || boardData === null || draftData.getRowCount() === 0 || boardData.getRowCount() === 0) {
       console.log("loading data");
     } else {
 
-    //title
-    p.textStyle(p.BOLD);
-    p.textSize(30);
-    p.text("2024 NBA Draft: Media Rankings vs. Draft Positions", midWidth, 40);
-    p.textSize(22);
-    p.text("Can we trust sports media?", midWidth, 75);
-    p.textSize(16);
-    p.textStyle(p.NORMAL);
-
-    let infoY = 150;
-    let playerSets = getPlayerSets(boardData);
-    let correctPlayers = playerSets[0];
-    let incorrectPlayers = playerSets[1];
-    let missedPlayers = playerSets[2];
-    let accuracy = playerSets[3];
-    let percentage = playerSets[4];
-    p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 30);
-    p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 50);
-    p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 70);
-    p.textSize(25);
-    p.textStyle(p.ITALIC);
-    p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
-
-    //drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
-
-
-    let playerSetsMap = new Map();
-    boardDataMap.keys().forEach((option) => {
-      let playerSets = getPlayerSets(boardDataMap.get(option));
-      playerSetsMap.set(option, playerSets);
-    })
-
-    //sort by accuracy
-    let sortBy = 4;
-    let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
-
-    let barHeight = 35;
-    let ySpacing = 60
-    sortedplayerSetsMap.entries().forEach((entry) => {
-      let option = entry[0];
-      let playerSets = entry[1];
-      let isSelected = (option === rankSourceSelect.value());
-      drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets, option, isSelected);
-      ySpacing += 60;
-    })
-
-    let interactY = 750;
-    correctnessRange = correctnessSlider.value();
-    correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
-    p.textAlign(p.RIGHT, p.CENTER);
-    p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 30);
-    p.textAlign(p.LEFT, p.CENTER);
-    p.text("20", fourthWidth + sliderLength / 2, interactY - 30);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.text("when the difference is less than " + correctnessRange, fourthWidth, interactY - 70);
-
-    p.text("Media Source", fourthWidth, interactY - 130);
-    rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, interactY - 60);
-
-
-    let yStart = graphPositionOffsetY;
-    let yEnd = graphHeight + graphPositionOffsetY;
-    let x = midWidth + graphPositionOffsetX;
-    let x2 = midWidth + graphLength + graphPositionOffsetX;
-    let textPixelLineOffset = 12;
-
-    p.fill(textColor);
-    p.textSize(numbersTextSize);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.strokeWeight(lineWeight);
-    p.text("Media Rankings", x, yStart - 20);
-    p.text("Draft Positions", x2, yStart - 20);
-
-
-    let hoverData = [];
-
-    for(let i = 0; i < rankRange[1]; i++) {
-
-      let boardRank = boardData.getString(i, "Rank");
-
-      let playerData = boardData.getRow(i);
-      playerData = playerData.obj;
-      let draftPosition = "N/A";
-      if(draftPlayerMap.has(playerData.Name)) {
-        draftPosition = draftPlayerMap.get(playerData.Name);
-      }
-      draftPlayerFree.delete(playerData.Name);
-
-
-      let y = p.map(boardRank, rankRange[0], rankRange[1], yStart, yEnd);
-      let y2 = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
-
-
-      if(isCorrect(boardRank, draftPosition)) {
-        p.stroke(correctColor);
-        p.fill(correctColor);
-      } else {
-        p.stroke(incorrectColor);
-        p.fill(incorrectColor);
+      if (boardPlayerMap.size === 0) {
+        createBoardMap(boardData);
       }
 
-      let d;
-      if(draftPosition === "N/A" || draftPosition > rankRange[1]) {
-        p.strokeWeight(lineWeight * 3);
-        p.line(x + textPixelLineOffset + 2, y, x + textPixelLineOffset + 2, y);
-        p.noStroke();
-        if(draftPosition !== "N/A") {
-          p.textSize(numbersTextSize * 0.7);
-          p.text(draftPosition, x + textPixelLineOffset + 12, y);
-          p.textSize(numbersTextSize);
-        }
-        d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x + textPixelLineOffset, y);
-      } else {
-        d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
-        p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
-      }
-      p.noStroke();
-      p.strokeWeight(lineWeight);
+      //title
+      p.textStyle(p.BOLD);
+      p.textSize(30);
+      p.text("2024 NBA Draft: Media Rankings vs. Draft Positions", midWidth, 40);
+      p.textSize(22);
+      p.text("Can we trust sports media?", midWidth, 75);
+      p.textSize(16);
+      p.textStyle(p.NORMAL);
 
-      if (d < 4) {
-        hoverData = [playerData.Name, boardRank, draftPosition];
-      }
+      let infoY = 150;
+      let playerSets = getPlayerSets(boardData);
+
+      let correctPlayers = playerSets[0];
+      let incorrectPlayers = playerSets[1];
+      let missedPlayers = playerSets[2];
+      let accuracy = playerSets[3];
+      let percentage = playerSets[4];
+      p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 30);
+      p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 50);
+      p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 70);
+      p.textSize(25);
+      p.textStyle(p.ITALIC);
+      p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
+
+      //drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
+
+
+      let playerSetsMap = new Map();
+      boardDataMap.keys().forEach((option) => {
+        let playerSets = getPlayerSets(boardDataMap.get(option));
+        playerSetsMap.set(option, playerSets);
+      })
+
+      //sort by accuracy
+      let sortBy = 4;
+      let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
+
+      let barHeight = 35;
+      let ySpacing = 60
+      sortedplayerSetsMap.entries().forEach((entry) => {
+        let option = entry[0];
+        let playerSets = entry[1];
+        let isSelected = (option === rankSourceSelect.value());
+        drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets, option, isSelected);
+        ySpacing += 60;
+      })
+
+      let interactY = 750;
+      correctnessRange = correctnessSlider.value();
+      correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
+      p.textAlign(p.RIGHT, p.CENTER);
+      p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 30);
+      p.textAlign(p.LEFT, p.CENTER);
+      p.text("20", fourthWidth + sliderLength / 2, interactY - 30);
+      p.textAlign(p.CENTER, p.CENTER);
+      p.text("when the difference is less than " + correctnessRange, fourthWidth, interactY - 70);
+
+      p.text("Media Source", fourthWidth, interactY - 130);
+      rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, interactY - 60);
+
+
+      let yStart = graphPositionOffsetY;
+      let yEnd = graphHeight + graphPositionOffsetY;
+      let x = midWidth + graphPositionOffsetX;
+      let x2 = midWidth + graphLength + graphPositionOffsetX;
+      let textPixelLineOffset = 12;
 
       p.fill(textColor);
-      p.text(i + 1, x, y);
-      if(draftData.getRowCount() > i) {
-        p.text(i + 1, x2, y);
-      }
-
-    }
-
-    draftPlayerFree.forEach(player => {
-      let draftPosition = draftPlayerMap.get(player);
-      let y = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
-      p.fill(incorrectColor);
-      p.textSize(numbersTextSize * 0.7);
       p.textSize(numbersTextSize);
-      p.fill(textColor);
-      p.stroke(missedColor);
-      p.strokeWeight(lineWeight * 3);
-      p.line(x2 - textPixelLineOffset - 2, y, x2 - textPixelLineOffset - 2, y);
+      p.textAlign(p.CENTER, p.CENTER);
       p.strokeWeight(lineWeight);
-      p.noStroke();
-      let d = pointLineDistance(p.mouseX, p.mouseY, x2 - textPixelLineOffset - 2, y, x2 - textPixelLineOffset - 2, y);
-      if (d < 4) {
-        hoverData = [player, "N/A", draftPosition];
+      p.text("Media Rankings", x, yStart - 20);
+      p.text("Draft Positions", x2, yStart - 20);
+
+
+      let hoverData = [];
+
+      for (let i = 0; i < rankRange[1]; i++) {
+
+        let boardRank = boardData.getString(i, "Rank");
+
+        let playerData = boardData.getRow(i);
+        playerData = playerData.obj;
+        let draftPosition = "N/A";
+        if (draftPlayerMap.has(playerData.Name)) {
+          draftPosition = draftPlayerMap.get(playerData.Name);
+        }
+        draftPlayerFree.delete(playerData.Name);
+
+
+        let y = p.map(boardRank, rankRange[0], rankRange[1], yStart, yEnd);
+        let y2 = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
+
+
+        if (isCorrect(boardRank, draftPosition)) {
+          p.stroke(correctColor);
+          p.fill(correctColor);
+        } else {
+          p.stroke(incorrectColor);
+          p.fill(incorrectColor);
+        }
+
+        let d;
+        if (draftPosition === "N/A" || draftPosition > rankRange[1]) { //draw dot with number if out of range
+          p.strokeWeight(lineWeight * 3);
+          drawDot(x + textPixelLineOffset + 2, y);
+          p.noStroke();
+          if (draftPosition !== "N/A") {
+            p.textSize(numbersTextSize * 0.7);
+            p.text(draftPosition, x + textPixelLineOffset + 12, y);
+            p.textSize(numbersTextSize);
+          }
+          d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x + textPixelLineOffset, y);
+        } else {
+          d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
+          p.line(x + textPixelLineOffset, y, x2 - textPixelLineOffset, y2);
+        }
+        p.noStroke();
+        p.strokeWeight(lineWeight);
+
+        if (d < 4) {
+          hoverData = [playerData.Name, boardRank, draftPosition];
+        }
+
+        p.fill(textColor);
+        p.text(i + 1, x, y);
+        if (draftData.getRowCount() > i) {
+          p.text(i + 1, x2, y);
+        }
       }
-    });
+
+      draftPlayerFree.forEach(player => {
+        let boardRank = "N/A";
+        let draftPosition = draftPlayerMap.get(player);
+        let y = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
+
+        if (boardPlayerMap.has(player)) {
+          boardRank = boardPlayerMap.get(player);
+          if (isCorrect(boardRank, draftPosition)) {
+            p.stroke(correctColor);
+            p.fill(correctColor);
+          } else {
+            p.stroke(incorrectColor);
+            p.fill(incorrectColor);
+          }
+          drawDot(x2 - textPixelLineOffset - 2, y);
+          p.noStroke();
+          p.textSize(numbersTextSize * 0.7);
+          p.text(boardRank, x2 - textPixelLineOffset - 12, y);
+          p.textSize(numbersTextSize);
+        } else {
+          p.fill(missedColor);
+          p.stroke(missedColor);
+          drawDot(x2 - textPixelLineOffset - 2, y);
+        }
+        p.noStroke();
+        p.fill(textColor);
+
+        let d = pointLineDistance(p.mouseX, p.mouseY, x2 - textPixelLineOffset - 2, y, x2 - textPixelLineOffset - 2, y);
+        if (d < 4) {
+          hoverData = [player, boardRank, draftPosition];
+        }
+      });
 
 
-    if(hoverData.length !== 0) {
-      drawHoverBox(hoverData);
+      if (hoverData.length !== 0) {
+        drawHoverBox(hoverData);
+      }
     }
+
   }
 
+  function drawDot(x, y) {
+    p.strokeWeight(lineWeight * 3);
+    p.line(x, y, x, y);
+    p.strokeWeight(lineWeight);
+  }
+
+  function createBoardMap(boardData) {
+    for (let i = 0; i < boardData.getRowCount(); i++) {
+      let row = boardData.getRow(i);
+      row = row.obj;
+      boardPlayerMap.set(row.Name, row.Rank);
+    }
   }
 
   function drawSourceStats(x, y, barHeight, playerSets, sourceName, isSelected) {
@@ -258,10 +296,10 @@ registerSketch('sk5', function (p) {
     p.textSize(20);
     p.text(nameParts[0], x - 180, y + barHeight / 3);
     p.textSize(14);
-    p.text("+/- " + accuracy , x + 140, y + 8);
-    p.text(percentage + "%" , x + 140, y + barHeight - 2);
+    p.text("+/- " + accuracy, x + 140, y + 8);
+    p.text(percentage + "%", x + 140, y + barHeight - 2);
     p.text(nameParts[1], x - 180, y + barHeight - 2);
-    if(isSelected) {
+    if (isSelected) {
       p.rect(x - 260, y + 3, 2, barHeight);
       p.text("selected", x - 260 - 40, y + barHeight / 2);
     }
@@ -294,10 +332,10 @@ registerSketch('sk5', function (p) {
     p.text(cor.size, x + correctBarLength + 12, y + height / 2);
     p.fill("red");
     p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
-    p.text(inc.size, x  - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
+    p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
     p.fill("darkred");
     p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
-    p.text("+" + miss.size, x  - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
+    p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
     p.fill("black");
     p.rect(x - 1, y, 2, height);
     p.textSize(16);
@@ -314,26 +352,26 @@ registerSketch('sk5', function (p) {
     let incorrectPlayers = new Set();
     let missedPlayers = new Set();
     let accuracy = 0;
-    if(draftPlayerMap.size === 0) {
-      for(let i = 0; i < draftData.getRowCount(); i++) {
+    if (draftPlayerMap.size === 0) {
+      for (let i = 0; i < draftData.getRowCount(); i++) {
         draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
-        if(i < rankRange[1]) {
+        if (i < rankRange[1]) {
           draftPlayerFree.add(draftData.getString(i, "Player"));
         }
       }
     }
 
     const seenPlayers = new Set();
-    for(let i = rankRange[0] - 1; i < rankRange[1]; i++) {
+    for (let i = rankRange[0] - 1; i < rankRange[1]; i++) {
       let playerName = source.getString(i, "Name");
       let playerRank = source.getString(i, "Rank");
       let draftRank = draftPlayerMap.get(playerName);
-      if(!draftPlayerMap.has(playerName)) {
+      if (!draftPlayerMap.has(playerName)) {
         draftRank = null;
         incorrectPlayers.add(playerName);
       } else {
         accuracy += Math.abs(draftPlayerMap.get(playerName) - playerRank);
-        if(isCorrect(draftRank, playerRank)) {
+        if (isCorrect(draftRank, playerRank)) {
           correctPlayers.add(playerName);
         } else {
           incorrectPlayers.add(playerName);
@@ -342,9 +380,10 @@ registerSketch('sk5', function (p) {
       seenPlayers.add(playerName);
     }
     draftPlayerFree.forEach(player => {
-      if(!seenPlayers.has(player)) {
+      if (!seenPlayers.has(player)) {
         missedPlayers.add(player);
-      }});
+      }
+    });
     accuracy /= rankRange[1];
     let percentage = correctPlayers.size / (correctPlayers.size + incorrectPlayers.size + missedPlayers.size);
 
