@@ -11,7 +11,7 @@ registerSketch('sk5', function (p) {
   const draftPlayerMap = new Map();
   const draftPlayerFree = new Set();
 
-  const boardPlayerMap = new Map();
+  let boardPlayerMap = new Map();
 
   let boardData = null;
   let draftData = null;
@@ -65,7 +65,7 @@ registerSketch('sk5', function (p) {
     rankSourceSelect.changed(() => {
       let value = rankSourceSelect.value();
       boardData = boardDataMap.get(value);
-      createBoardMap(boardData);
+      boardPlayerMap = createBoardMap(boardData);
     });
   };
 
@@ -94,7 +94,7 @@ registerSketch('sk5', function (p) {
     } else {
 
       if (boardPlayerMap.size === 0) {
-        createBoardMap(boardData);
+        boardPlayerMap = createBoardMap(boardData);
       }
 
       //title
@@ -132,7 +132,8 @@ registerSketch('sk5', function (p) {
 
       //sort by accuracy
       let sortBy = 4;
-      let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
+      let sortedplayerSetsMap = playerSetsMap;
+      //let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
 
       let barHeight = 35;
       let ySpacing = 60
@@ -276,11 +277,13 @@ registerSketch('sk5', function (p) {
   }
 
   function createBoardMap(boardData) {
+    let map = new Map();
     for (let i = 0; i < boardData.getRowCount(); i++) {
       let row = boardData.getRow(i);
       row = row.obj;
-      boardPlayerMap.set(row.Name, row.Rank);
+      map.set(row.Name, row.Rank);
     }
+    return map;
   }
 
   function drawSourceStats(x, y, barHeight, playerSets, sourceName, isSelected) {
@@ -348,6 +351,7 @@ registerSketch('sk5', function (p) {
   }
 
   function getPlayerSets(source) {
+    let guessMap = createBoardMap(source);
     let correctPlayers = new Set();
     let incorrectPlayers = new Set();
     let missedPlayers = new Set();
@@ -361,7 +365,6 @@ registerSketch('sk5', function (p) {
       }
     }
 
-    const seenPlayers = new Set();
     for (let i = rankRange[0] - 1; i < rankRange[1]; i++) {
       let playerName = source.getString(i, "Name");
       let playerRank = source.getString(i, "Rank");
@@ -370,18 +373,26 @@ registerSketch('sk5', function (p) {
         draftRank = null;
         incorrectPlayers.add(playerName);
       } else {
-        accuracy += Math.abs(draftPlayerMap.get(playerName) - playerRank);
+        accuracy += Math.abs(draftRank - playerRank);
         if (isCorrect(draftRank, playerRank)) {
           correctPlayers.add(playerName);
         } else {
           incorrectPlayers.add(playerName);
         }
       }
-      seenPlayers.add(playerName);
     }
     draftPlayerFree.forEach(player => {
-      if (!seenPlayers.has(player)) {
+      if (!guessMap.has(player)) {
         missedPlayers.add(player);
+      } else {
+        let playerRank = guessMap.get(player);
+        let draftRank = draftPlayerMap.get(player);
+        accuracy += Math.abs(draftRank - playerRank);
+        if (isCorrect(draftRank, playerRank)) {
+          correctPlayers.add(player);
+        } else {
+          incorrectPlayers.add(player);
+        }
       }
     });
     accuracy /= rankRange[1];
