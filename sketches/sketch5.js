@@ -9,10 +9,10 @@
 registerSketch('sk5', function (p) {
 
   const draftPlayerMap = new Map();
-  const draftPlayerFree = new Set();
 
-  let boardPlayerMap = new Map();
+  let sourceToBoardPlayerMap = new Map();
 
+  let boardDataName = null;
   let boardData = null;
   let draftData = null;
 
@@ -36,7 +36,6 @@ registerSketch('sk5', function (p) {
   let sliderLength = 200;
 
   let correctnessSlider;
-  let rankSourceSelect;
 
 
   p.preload = function () {
@@ -55,22 +54,10 @@ registerSketch('sk5', function (p) {
     // boardDataMap.set("SportingNews - Top Players", SNB);
     // boardDataMap.set("The Ringer - Top Players", TRB);
     boardData = ESPNM;
+    boardDataName = "ESPN - Mock Draft";
     draftData = p.loadTable('sketches/hw5assets/DRAFT-2024.csv', 'csv', 'header');
     console.log("draftData loaded in preload");
 
-
-    rankSourceSelect = p.createSelect();
-    rankSourceSelect.style('width', '150px');
-
-    boardDataMap.keys().forEach((source) => {
-      rankSourceSelect.option(source);
-    })
-
-    rankSourceSelect.changed(() => {
-      let value = rankSourceSelect.value();
-      boardData = boardDataMap.get(value);
-      boardPlayerMap = createBoardMap(boardData);
-    });
   };
 
   p.setup = function () {
@@ -97,8 +84,13 @@ registerSketch('sk5', function (p) {
       console.log("loading data");
     } else {
 
-      if (boardPlayerMap.size === 0) {
-        boardPlayerMap = createBoardMap(boardData);
+      //make source -> player -> rank map, after data is loaded since preload doesnt work for some reason
+      if(sourceToBoardPlayerMap.size === 0) {
+        boardDataMap.keys().forEach((sourceName) => {
+          let currData = boardDataMap.get(sourceName);
+          let newMap = createBoardMap(currData);
+          sourceToBoardPlayerMap.set(sourceName, newMap);
+        });
       }
 
       //title
@@ -140,7 +132,7 @@ registerSketch('sk5', function (p) {
             totalStats[i] += playerSets[i];
           }
         }
-        let isSelected = (option === rankSourceSelect.value());
+        let isSelected = (option === boardDataName);
         drawSourceStats(fourthWidth, sourcesY + startSpacing + infoY, barHeight, playerSets, option, isSelected);
         startSpacing += ySpacing;
       })
@@ -162,7 +154,7 @@ registerSketch('sk5', function (p) {
       p.text("Accuracy: +/- " + accuracy, fourthWidth - 180, infoY + 110);
       p.textSize(20);
       p.textStyle(p.ITALIC);
-      p.text(percentage + "% of all guesses are correct", fourthWidth, infoY)
+      p.text(percentage + "% of total guesses are correct", fourthWidth, infoY)
       p.textStyle(p.NORMAL);
       p.textSize(16);
 
@@ -183,9 +175,6 @@ registerSketch('sk5', function (p) {
       p.textAlign(p.CENTER, p.CENTER);
       p.text("when the difference is less than " + correctnessRange, fourthWidth, interactY - 70);
 
-      p.text("Media Source", fourthWidth, interactY - 130);
-      rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, interactY - 60);
-
 
       let yStart = graphPositionOffsetY;
       let yEnd = graphHeight + graphPositionOffsetY;
@@ -197,14 +186,16 @@ registerSketch('sk5', function (p) {
       p.textAlign(p.CENTER, p.CENTER);
       p.strokeWeight(lineWeight);
       p.textSize(18);
-      p.text(rankSourceSelect.value(), (x + x2) / 2, infoY);
+      p.text(boardDataName.split(" - ")[0], (x + x2) / 2, infoY);
       p.textSize(numbersTextSize);
-      p.text("Media Rankings", x, yStart - 20);
-      p.text("Draft Positions", x2, yStart - 20);
+      p.text("Mock Draft", x, yStart - 20);
+      p.text("NBA Draft", x2, yStart - 20);
 
 
       let hoverData = [];
 
+
+      let draftPlayerFree = resetDraftPlayerFree();
       for (let i = 0; i < rankRange[1]; i++) {
 
         let boardRank = boardData.getString(i, "Rank");
@@ -263,9 +254,9 @@ registerSketch('sk5', function (p) {
         let boardRank = "N/A";
         let draftPosition = draftPlayerMap.get(player);
         let y = p.map(draftPosition, rankRange[0], rankRange[1], yStart, yEnd);
-
-        if (boardPlayerMap.has(player)) {
-          boardRank = boardPlayerMap.get(player);
+        let currentBoardPlayerMap = sourceToBoardPlayerMap.get(boardDataName);
+        if (currentBoardPlayerMap.has(player)) {
+          boardRank = currentBoardPlayerMap.get(player);
           if (isCorrect(boardRank, draftPosition)) {
             p.stroke(correctColor);
             p.fill(correctColor);
@@ -292,7 +283,6 @@ registerSketch('sk5', function (p) {
         }
       });
 
-
       if (hoverData.length !== 0) {
         drawHoverBox(hoverData);
       }
@@ -304,6 +294,15 @@ registerSketch('sk5', function (p) {
     p.strokeWeight(lineWeight * 3);
     p.line(x, y, x, y);
     p.strokeWeight(lineWeight);
+  }
+
+  function resetDraftPlayerFree() {
+      //reset draftplayerfree set
+      let set = new Set();
+      for (let i = 0; i < rankRange[1]; i++) {
+        set.add(draftData.getString(i, "Player"));
+      }
+      return set;
   }
 
   function createBoardMap(boardData) {
@@ -324,12 +323,24 @@ registerSketch('sk5', function (p) {
     let missedPlayers = playerSets[2];
     let accuracy = playerSets[3];
     let percentage = playerSets[4];
+    const rectX = x - 240;
+    const rectY = y - 2;
+    const rectW = 440;
+    const rectH = height + 10;
     if (isSelected) {
       p.noStroke();
       p.fill('lightgrey')
-      p.rect(x - 240, y - 2, 440, height + 10);
+      p.rect(rectX, rectY, rectW, rectH);
       p.fill('black');
       p.rect(x - 240, y - 2, 2, height + 10);
+    } else {
+        if (p.mouseIsPressed) {
+          if (p.mouseX > rectX && p.mouseX < rectX + rectW &&
+              p.mouseY > rectY && p.mouseY < rectY + rectH) {
+            boardData = boardDataMap.get(sourceName);
+            boardDataName = sourceName;
+          }
+        }
     }
     p.textStyle(p.NORMAL);
     p.textSize(14);
@@ -373,6 +384,7 @@ registerSketch('sk5', function (p) {
       p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y);
       p.fill(missedColor);
       p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
+      p.textSize(10);
       p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y  + 14);
     } else {
       p.fill(incorrectColor);
@@ -487,9 +499,6 @@ registerSketch('sk5', function (p) {
     if (draftPlayerMap.size === 0) {
       for (let i = 0; i < draftData.getRowCount(); i++) {
         draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
-        if (i < rankRange[1]) {
-          draftPlayerFree.add(draftData.getString(i, "Player"));
-        }
       }
     }
 
@@ -509,6 +518,7 @@ registerSketch('sk5', function (p) {
         }
       }
     }
+    let draftPlayerFree = resetDraftPlayerFree();
     draftPlayerFree.forEach(player => {
       if (!guessMap.has(player)) {
         missedPlayers.add(player);
