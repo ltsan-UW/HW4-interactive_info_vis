@@ -19,7 +19,7 @@ registerSketch('sk5', function (p) {
   const boardDataMap = new Map();
 
   let correctnessRange = 3;
-  let rankRange = [1, 35];
+  let rankRange = [1, 30];
 
   let textColor = "black"
   let correctColor = "green"
@@ -28,9 +28,9 @@ registerSketch('sk5', function (p) {
   let numbersTextSize = 14;
   let lineWeight = 2;
   let graphLength = 400;
-  let graphHeight = 600;
-  let graphPositionOffsetX = 0;
-  let graphPositionOffsetY = 140;
+  let graphHeight = 550;
+  let graphPositionOffsetX = 100;
+  let graphPositionOffsetY = 155;
   let sliderLength = 200;
 
   let correctnessSlider;
@@ -144,33 +144,36 @@ registerSketch('sk5', function (p) {
       })
 
 
-      let playerSets = getPlayerSets(boardData);
-
       let correctPlayers = totalStats[0];
       let incorrectPlayers = totalStats[1];
       let missedPlayers = totalStats[2];
       let accuracy = Math.floor(totalStats[3] / sortedplayerSetsMap.size * 10) / 10;
       let percentage = totalStats[4] / sortedplayerSetsMap.size;
       let totalPlayers = totalStats[1] + totalStats[2] + totalStats[0];
-      p.text("Correct Players: " + correctPlayers, fourthWidth - 180, infoY + 30);
-      p.text("Incorrect Players: " + incorrectPlayers, fourthWidth - 180, infoY + 50);
-      p.text("Missed Players: " + missedPlayers, fourthWidth - 180, infoY + 70);
-      p.text("Accuracy: +/- " + accuracy, fourthWidth - 180, infoY + 100);
-      p.textSize(25);
+      p.fill(correctColor);
+      p.text(correctPlayers + " / " + totalPlayers, fourthWidth - 180, infoY + 40);
+      p.fill(incorrectColor);
+      p.text(incorrectPlayers + " / " + totalPlayers, fourthWidth - 180, infoY + 60);
+      p.fill(missedColor);
+      p.text(missedPlayers + " / " + totalPlayers, fourthWidth - 180, infoY + 80);
+      p.fill('black');
+      p.text("Accuracy: +/- " + accuracy, fourthWidth - 180, infoY + 110);
+      p.textSize(20);
       p.textStyle(p.ITALIC);
       p.text(percentage + "% of all guesses are correct", fourthWidth, infoY)
       p.textStyle(p.NORMAL);
       p.textSize(16);
 
       let bigGraphLength = 200;
-      drawBigBarGraph(midWidth - bigGraphLength - bigGraphLength / 2, infoY + 20, bigGraphLength, bigGraphLength, missedPlayers, incorrectPlayers, correctPlayers, totalPlayers)
+      drawBigBarGraph(midWidth - bigGraphLength - bigGraphLength / 2, infoY + 30, bigGraphLength, bigGraphLength, missedPlayers, incorrectPlayers, correctPlayers, totalPlayers)
 
 
 
 
-      let interactY = 750;
+      let interactY = graphPositionOffsetY + graphHeight + 30;
       correctnessRange = correctnessSlider.value();
       correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
+      p.textSize(14);
       p.textAlign(p.RIGHT, p.CENTER);
       p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 30);
       p.textAlign(p.LEFT, p.CENTER);
@@ -189,9 +192,11 @@ registerSketch('sk5', function (p) {
       let textPixelLineOffset = 12;
 
       p.fill(textColor);
-      p.textSize(numbersTextSize);
       p.textAlign(p.CENTER, p.CENTER);
       p.strokeWeight(lineWeight);
+      p.textSize(18);
+      p.text(rankSourceSelect.value(), (x + x2) / 2, infoY);
+      p.textSize(numbersTextSize);
       p.text("Media Rankings", x, yStart - 20);
       p.text("Draft Positions", x2, yStart - 20);
 
@@ -316,19 +321,22 @@ registerSketch('sk5', function (p) {
     let missedPlayers = playerSets[2];
     let accuracy = playerSets[3];
     let percentage = playerSets[4];
-    p.textStyle(p.NORMAL);
-    p.textSize(16);
-    drawBarGraph(x, y + 3, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
-    p.textSize(20);
-    p.text(nameParts[0], x - 180, y + barHeight / 3);
-    p.textSize(14);
-    p.text("+/- " + accuracy, x + 140, y + 8);
-    p.text(percentage + "%", x + 140, y + barHeight - 2);
-    p.text(nameParts[1], x - 180, y + barHeight - 2);
     if (isSelected) {
-      p.rect(x - 260, y + 3, 2, barHeight);
-      p.text("selected", x - 260 - 40, y + barHeight / 2);
+      p.noStroke();
+      p.fill('lightgrey')
+      p.rect(x - 240, y - 2, 440, barHeight + 10);
+      p.fill('black');
+      p.rect(x - 240, y - 2, 2, barHeight + 10);
     }
+    p.textStyle(p.NORMAL);
+    p.textSize(14);
+    drawBarGraph(x, y + 3, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
+    p.textSize(16);
+    p.text(nameParts[0], x - 180, y + barHeight / 3);
+    p.textSize(12);
+    p.text("+/- " + accuracy, x + 140, y + 12);
+    p.text(percentage + "%", x + 140, y + barHeight - 6);
+    p.text(nameParts[1], x - 180, y + barHeight - 2);
   }
 
   function drawHoverBox(hoverData) {
@@ -431,7 +439,7 @@ registerSketch('sk5', function (p) {
 
         // Check if we've drawn all 'max' points
         if (pointCount > max) {
-          p.fill('black');
+          p.fill('white');
         } else {
           // Determine the color based on the counts
           if (pointCount <= cor) {
@@ -445,7 +453,7 @@ registerSketch('sk5', function (p) {
             p.fill(missedColor);
           } else {
             // All accounted points have been drawn, use the unused color
-            p.fill('black');
+            p.fill('white');
           }
         }
 
