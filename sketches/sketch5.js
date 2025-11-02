@@ -16,15 +16,16 @@ registerSketch('sk5', function (p) {
   const boardDataMap = new Map();
 
   let correctnessRange = 3;
-  let rankRange = [1,30];
+  let rankRange = [1,58];
 
   let textColor = "black"
   let correctColor = "green"
   let incorrectColor = "red"
+  let missedColor = "darkred"
   let numbersTextSize = 14;
   let lineWeight = 2;
   let graphLength = 400;
-  let graphHeight = 600;
+  let graphHeight = 900;
   let graphPositionOffsetX = 0;
   let graphPositionOffsetY = 140;
   let sliderLength = 200;
@@ -125,7 +126,7 @@ registerSketch('sk5', function (p) {
     p.textAlign(p.CENTER, p.CENTER);
     p.text("when the difference is less than " + correctnessRange, fourthWidth, interactY - 70);
 
-    p.text("Rank Source", fourthWidth, interactY - 130);
+    p.text("Media Source", fourthWidth, interactY - 130);
     rankSourceSelect.position(fourthWidth - rankSourceSelect.width / 2, interactY - 60);
 
 
@@ -207,7 +208,7 @@ registerSketch('sk5', function (p) {
       p.textSize(numbersTextSize * 0.7);
       p.textSize(numbersTextSize);
       p.fill(textColor);
-      p.stroke(incorrectColor);
+      p.stroke(missedColor);
       p.strokeWeight(lineWeight * 3);
       p.line(x2 - textPixelLineOffset - 2, y, x2 - textPixelLineOffset - 2, y);
       p.strokeWeight(lineWeight);
@@ -240,17 +241,26 @@ registerSketch('sk5', function (p) {
   }
 
   function drawBarGraph(x, y, length, height, miss, inc, cor, max) {
+    // p.fill("white");
+    // p.stroke("black");
+    // p.rect(x - length, y - 1, length * 2, height + 2);
+    // p.noStroke();
+    p.textSize(14);
     let correctBarLength = p.map(cor.size, 0, max, 0, length);
     let incorrectBarLength = p.map(inc.size, 0, max, 0, length);
     let missingBarLength = p.map(miss.size, 0, max, 0, length);
     p.fill("green");
     p.rect(x + 1, y, correctBarLength, height);
+    p.text(cor.size, x + correctBarLength + 12, y + height / 2);
     p.fill("red");
     p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
+    p.text(inc.size, x  - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
     p.fill("darkred");
     p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
+    p.text("+" + miss.size, x  - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
     p.fill("black");
     p.rect(x - 1, y, 2, height);
+    p.textSize(16);
   }
 
   function isCorrect(rank1, rank2) {
@@ -275,13 +285,19 @@ registerSketch('sk5', function (p) {
     for(let i = rankRange[0] - 1; i < rankRange[1]; i++) {
       let playerName = boardData.getString(i, "Name");
       let playerRank = boardData.getString(i, "Rank");
-      seenPlayers.add(playerName);
-      accuracy += Math.abs(draftPlayerMap.get(playerName) - playerRank);
-      if(isCorrect(draftPlayerMap.get(playerName), playerRank)) {
-        correctPlayers.add(playerName);
-      } else {
+      let draftRank = draftPlayerMap.get(playerName);
+      if(!draftPlayerMap.has(playerName)) {
+        draftRank = null;
         incorrectPlayers.add(playerName);
+      } else {
+        accuracy += Math.abs(draftPlayerMap.get(playerName) - playerRank);
+        if(isCorrect(draftRank, playerRank)) {
+          correctPlayers.add(playerName);
+        } else {
+          incorrectPlayers.add(playerName);
+        }
       }
+      seenPlayers.add(playerName);
     }
     draftPlayerFree.forEach(player => {
       if(!seenPlayers.has(player)) {
