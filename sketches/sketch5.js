@@ -108,23 +108,9 @@ registerSketch('sk5', function (p) {
       p.textSize(16);
       p.textStyle(p.NORMAL);
 
-      let infoY = 150;
-      let playerSets = getPlayerSets(boardData);
 
-      let correctPlayers = playerSets[0];
-      let incorrectPlayers = playerSets[1];
-      let missedPlayers = playerSets[2];
-      let accuracy = playerSets[3];
-      let percentage = playerSets[4];
-      p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 30);
-      p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 50);
-      p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 70);
-      p.textSize(25);
-      p.textStyle(p.ITALIC);
-      p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
-
-      //drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
-
+      let infoY = 120;
+      //playerSets contains [correctPlayers, incorrectPlayers, missedPlayers, accuracy, percentage]
 
       let playerSetsMap = new Map();
       boardDataMap.keys().forEach((option) => {
@@ -134,18 +120,53 @@ registerSketch('sk5', function (p) {
 
       //sort by accuracy
       let sortBy = 4;
-      let sortedplayerSetsMap = playerSetsMap;
+      let sortedplayerSetsMap = playerSetsMap; //no sorting
       //let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
 
+      let sourcesY = 220;
       let barHeight = 35;
-      let ySpacing = 60
+      let ySpacing = 50;
+      let startSpacing = ySpacing;
+      let totalStats = [0, 0, 0, 0, 0];
       sortedplayerSetsMap.entries().forEach((entry) => {
         let option = entry[0];
         let playerSets = entry[1];
+        for (let i = 0; i < playerSets.length; i++) {
+          if (playerSets[i] instanceof Map || playerSets[i] instanceof Set) {
+            totalStats[i] += playerSets[i].size;
+          } else {
+            totalStats[i] += playerSets[i];
+          }
+        }
         let isSelected = (option === rankSourceSelect.value());
-        drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets, option, isSelected);
-        ySpacing += 60;
+        drawSourceStats(fourthWidth, sourcesY + startSpacing + infoY, barHeight, playerSets, option, isSelected);
+        startSpacing += ySpacing;
       })
+
+
+      let playerSets = getPlayerSets(boardData);
+
+      let correctPlayers = totalStats[0];
+      let incorrectPlayers = totalStats[1];
+      let missedPlayers = totalStats[2];
+      let accuracy = Math.floor(totalStats[3] / sortedplayerSetsMap.size * 10) / 10;
+      let percentage = totalStats[4] / sortedplayerSetsMap.size;
+      let totalPlayers = totalStats[1] + totalStats[2] + totalStats[0];
+      p.text("Correct Players: " + correctPlayers, fourthWidth - 180, infoY + 30);
+      p.text("Incorrect Players: " + incorrectPlayers, fourthWidth - 180, infoY + 50);
+      p.text("Missed Players: " + missedPlayers, fourthWidth - 180, infoY + 70);
+      p.text("Accuracy: +/- " + accuracy, fourthWidth - 180, infoY + 100);
+      p.textSize(25);
+      p.textStyle(p.ITALIC);
+      p.text(percentage + "% of all guesses are correct", fourthWidth, infoY)
+      p.textStyle(p.NORMAL);
+      p.textSize(16);
+
+      let bigGraphLength = 200;
+      drawBigBarGraph(midWidth - bigGraphLength - bigGraphLength / 2, infoY + 20, bigGraphLength, bigGraphLength, missedPlayers, incorrectPlayers, correctPlayers, totalPlayers)
+
+
+
 
       let interactY = 750;
       correctnessRange = correctnessSlider.value();
@@ -335,16 +356,110 @@ registerSketch('sk5', function (p) {
     p.fill("green");
     p.rect(x + 1, y, correctBarLength, height);
     p.text(cor.size, x + correctBarLength + 12, y + height / 2);
-    p.fill("red");
-    p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
-    p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
-    p.fill("darkred");
-    p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
-    p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
+    if (miss.size !== 0) {
+      p.fill("red");
+      p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
+      p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4);
+      p.fill("darkred");
+      p.rect(x - incorrectBarLength - missingBarLength - 1, y, missingBarLength, height);
+      p.text("+" + miss.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
+    } else {
+      p.fill("red");
+      p.rect(x - incorrectBarLength - 1, y, incorrectBarLength, height);
+      p.text(inc.size, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 2);
+    }
     p.fill("black");
     p.rect(x - 1, y, 2, height);
     p.textSize(16);
   }
+
+  // function drawBigBarGraph(x, y, length, height, miss, inc, cor, max) {
+
+  //   // p.textSize(14);
+  //   // let correctBarLength = p.map(cor, 0, max, 0, length);
+  //   // let incorrectBarLength = p.map(inc, 0, max, 0, length);
+  //   // let missingBarLength = p.map(miss, 0, max, 0, length);
+  //   // p.fill("black");
+  //   // p.rect(x - 1, y, 2, height);
+  //   // if(miss !== 0) {
+  //   //   p.fill("red");
+  //   //   p.rect(x + 1, y, incorrectBarLength, height);
+  //   //   p.text(inc, x + correctBarLength - missingBarLength - 1 - 12, y + height / 4);
+  //   //   p.fill("darkred");
+  //   //   p.rect(x + incorrectBarLength, y, missingBarLength, height);
+  //   //   p.text("+" + miss, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 4 * 3);
+  //   // } else {
+  //   //   p.fill("red");
+  //   //   p.rect(x + 1, y, incorrectBarLength, height);
+  //   //   p.text(inc, x - incorrectBarLength - missingBarLength - 1 - 12, y + height / 2);
+  //   // }
+  //   // p.fill(correctColor);
+  //   // p.rect(x + incorrectBarLength + missingBarLength, y, correctBarLength, height);
+  //   // p.text(cor, x + correctBarLength + 12, y + height / 2);
+  //   // p.textSize(16);
+  // }
+
+  /**
+ * Draws a grid of circles representing points with correct, incorrect, or missing statuses.
+ * * @param {number} x - The x-coordinate (top-left) of the grid area.
+ * @param {number} y - The y-coordinate (top-left) of the grid area.
+ * @param {number} length - The width of the grid area.
+ * @param {number} height - The height of the grid area.
+ * @param {number} miss - The count of 'missing' points (e.g., color RED).
+ * @param {number} inc - The count of 'incorrect' points (e.g., color YELLOW).
+ * @param {number} cor - The count of 'correct' points (e.g., color GREEN).
+ * @param {number} max - The total number of points in the grid (e.g., 100).
+ */
+  function drawBigBarGraph(x, y, length, height, miss, inc, cor, max) {
+    // --- Configuration ---
+    const columns = 10; // Number of columns in the grid
+    const rows = Math.ceil(max / columns); // Calculate rows based on max points
+
+    const cellWidth = length / columns;
+    const cellHeight = height / rows;
+    const circleDiameter = Math.min(cellWidth, cellHeight) * 0.75; // 75% of the smallest cell dimension
+
+
+    // --- Drawing Logic ---
+    let pointCount = 0; // Counter for the current point being drawn
+
+    p.noStroke(); // Circles will have no outline
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < columns; c++) {
+        pointCount++;
+
+        // Check if we've drawn all 'max' points
+        if (pointCount > max) {
+          p.fill('black');
+        } else {
+          // Determine the color based on the counts
+          if (pointCount <= cor) {
+            // This point is one of the 'correct' ones
+            p.fill(correctColor);
+          } else if (pointCount <= cor + inc) {
+            // This point is one of the 'incorrect' ones
+            p.fill(incorrectColor);
+          } else if (pointCount <= cor + inc + miss) {
+            // This point is one of the 'missing' ones
+            p.fill(missedColor);
+          } else {
+            // All accounted points have been drawn, use the unused color
+            p.fill('black');
+          }
+        }
+
+        // Calculate the center coordinates for the current circle
+        let centerX = x + c * cellWidth + cellWidth / 2;
+        let centerY = y + r * cellHeight + cellHeight / 2;
+
+        // Draw the circle
+        p.ellipse(centerX, centerY, circleDiameter, circleDiameter);
+        p.fill('black');
+      }
+    }
+  }
+
 
   function isCorrect(rank1, rank2) {
     rank1 = Number(rank1);
