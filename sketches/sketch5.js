@@ -98,12 +98,12 @@ registerSketch('sk5', function (p) {
     p.textStyle(p.NORMAL);
 
     let infoY = 150;
-    let correctIncorrectSetArray = updateCorrectAndIncorrectPlayers();
-    let correctPlayers = correctIncorrectSetArray[0];
-    let incorrectPlayers = correctIncorrectSetArray[1];
-    let missedPlayers = correctIncorrectSetArray[2];
-    let accuracy = correctIncorrectSetArray[3];
-    let percentage = correctIncorrectSetArray[4];
+    let playerSets = getPlayerSets(boardData);
+    let correctPlayers = playerSets[0];
+    let incorrectPlayers = playerSets[1];
+    let missedPlayers = playerSets[2];
+    let accuracy = playerSets[3];
+    let percentage = playerSets[4];
     p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 40);
     p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 60);
     p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 80);
@@ -111,9 +111,12 @@ registerSketch('sk5', function (p) {
     p.textStyle(p.ITALIC);
     p.text(percentage + "% of guesses are correct", fourthWidth, infoY)
 
+    let barHeight = 35;
+    drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
 
-
-    drawSourceStats(fourthWidth, 140 + infoY, 30, missedPlayers, incorrectPlayers, correctPlayers, accuracy, percentage);
+    let option = "The Ringer - Mock Draft";
+    let playerSets2 = getPlayerSets(boardDataMap.get(option));
+    drawSourceStats(fourthWidth, 200 + infoY, barHeight, playerSets2, option);
 
 
 
@@ -229,16 +232,22 @@ registerSketch('sk5', function (p) {
 
   }
 
-  function drawSourceStats(x, y, barHeight, missedPlayers, incorrectPlayers, correctPlayers, accuracy, percentage) {
+  function drawSourceStats(x, y, barHeight, playerSets, sourceName) {
+    let nameParts = sourceName.split(" - ");
+    let correctPlayers = playerSets[0];
+    let incorrectPlayers = playerSets[1];
+    let missedPlayers = playerSets[2];
+    let accuracy = playerSets[3];
+    let percentage = playerSets[4];
     p.textStyle(p.NORMAL);
     p.textSize(16);
     drawBarGraph(x, y + 3, 100, barHeight, missedPlayers, incorrectPlayers, correctPlayers, rankRange[1] + 5);
     p.textSize(20);
-    p.text("ESPN", x - 150, y + barHeight / 3);
+    p.text(nameParts[0], x - 150, y + barHeight / 3);
     p.textSize(14);
     p.text("+/- " + accuracy , x + 140, y + 8);
     p.text(percentage + "%" , x + 140, y + barHeight - 2);
-    p.text("Mock Draft", x - 150, y + barHeight - 2);
+    p.text(nameParts[1], x - 150, y + barHeight - 2);
   }
 
   function drawHoverBox(hoverData) {
@@ -283,22 +292,24 @@ registerSketch('sk5', function (p) {
     return (rank1 + correctnessRange >= rank2 && rank1 - correctnessRange <= rank2)
   }
 
-  function updateCorrectAndIncorrectPlayers() {
+  function getPlayerSets(source) {
     let correctPlayers = new Set();
     let incorrectPlayers = new Set();
     let missedPlayers = new Set();
     let accuracy = 0;
-    for(let i = 0; i < draftData.getRowCount(); i++) {
-      draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
-      if(i < rankRange[1]) {
-        draftPlayerFree.add(draftData.getString(i, "Player"));
+    if(draftPlayerMap.size === 0) {
+      for(let i = 0; i < draftData.getRowCount(); i++) {
+        draftPlayerMap.set(draftData.getString(i, "Player"), draftData.getString(i, "Pk"));
+        if(i < rankRange[1]) {
+          draftPlayerFree.add(draftData.getString(i, "Player"));
+        }
       }
     }
 
     const seenPlayers = new Set();
     for(let i = rankRange[0] - 1; i < rankRange[1]; i++) {
-      let playerName = boardData.getString(i, "Name");
-      let playerRank = boardData.getString(i, "Rank");
+      let playerName = source.getString(i, "Name");
+      let playerRank = source.getString(i, "Rank");
       let draftRank = draftPlayerMap.get(playerName);
       if(!draftPlayerMap.has(playerName)) {
         draftRank = null;
