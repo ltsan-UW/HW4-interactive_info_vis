@@ -113,16 +113,24 @@ registerSketch('sk5', function (p) {
 
     //drawSourceStats(fourthWidth, 140 + infoY, barHeight, playerSets, "ESPN - Mock Draft");
 
-    let option = "The Ringer - Mock Draft";
 
+    let playerSetsMap = new Map();
+    boardDataMap.keys().forEach((option) => {
+      let playerSets = getPlayerSets(boardDataMap.get(option));
+      playerSetsMap.set(option, playerSets);
+    })
 
+    //sort by accuracy
+    let sortBy = 4;
+    let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
 
     let barHeight = 35;
     let ySpacing = 60
-    boardDataMap.keys().forEach((option) => {
-      let playerSets2 = getPlayerSets(boardDataMap.get(option));
+    sortedplayerSetsMap.entries().forEach((entry) => {
+      let option = entry[0];
+      let playerSets = entry[1];
       let isSelected = (option === rankSourceSelect.value());
-      drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets2, option, isSelected);
+      drawSourceStats(fourthWidth, 40 + ySpacing + infoY, barHeight, playerSets, option, isSelected);
       ySpacing += 60;
     })
 
@@ -254,8 +262,8 @@ registerSketch('sk5', function (p) {
     p.text(percentage + "%" , x + 140, y + barHeight - 2);
     p.text(nameParts[1], x - 180, y + barHeight - 2);
     if(isSelected) {
-      p.rect(x - 250, y + 3, 2, barHeight);
-      p.text("selected", x - 250 - 40, y + barHeight / 2);
+      p.rect(x - 260, y + 3, 2, barHeight);
+      p.text("selected", x - 260 - 40, y + barHeight / 2);
     }
   }
 
