@@ -102,8 +102,8 @@ registerSketch('sk5', function (p) {
     let correctPlayers = correctIncorrectSetArray[0];
     let incorrectPlayers = correctIncorrectSetArray[1];
     let missedPlayers = correctIncorrectSetArray[2];
-    let accuracy = Math.floor(correctIncorrectSetArray[3] * 10) / 10;
-    let percentage = Math.floor(correctIncorrectSetArray[4] * 100);
+    let accuracy = correctIncorrectSetArray[3];
+    let percentage = correctIncorrectSetArray[4];
     p.text("Correct Players: " + correctPlayers.size, fourthWidth, infoY + 40);
     p.text("Incorrect Players: " + incorrectPlayers.size, fourthWidth, infoY + 60);
     p.text("Missed Players: " + missedPlayers.size, fourthWidth, infoY + 80);
@@ -113,7 +113,9 @@ registerSketch('sk5', function (p) {
 
 
 
-    drawSourceStats(fourthWidth, 140 + infoY, 30, missedPlayers, incorrectPlayers, correctPlayers, accuracy, percentage)
+    drawSourceStats(fourthWidth, 140 + infoY, 30, missedPlayers, incorrectPlayers, correctPlayers, accuracy, percentage);
+
+
 
 
     let interactY = 600;
@@ -316,8 +318,11 @@ registerSketch('sk5', function (p) {
         missedPlayers.add(player);
       }});
     accuracy /= rankRange[1];
-    let perc = correctPlayers.size / (correctPlayers.size + incorrectPlayers.size + missedPlayers.size);
-    return [correctPlayers, incorrectPlayers, missedPlayers, accuracy, perc];
+    let percentage = correctPlayers.size / (correctPlayers.size + incorrectPlayers.size + missedPlayers.size);
+
+    accuracy = Math.floor(accuracy * 10) / 10;
+    percentage = Math.floor(percentage * 100);
+    return [correctPlayers, incorrectPlayers, missedPlayers, accuracy, percentage];
   }
 
   //written with AI
