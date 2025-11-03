@@ -63,7 +63,7 @@ registerSketch('sk5', function (p) {
   p.setup = function () {
     p.createCanvas(p.windowWidth, graphHeight + 250);
 
-    correctnessSlider = p.createSlider(0, 20, correctnessRange);
+    correctnessSlider = p.createSlider(0, 18, correctnessRange);
     correctnessSlider.style('width', sliderLength + "px");
 
 
@@ -117,11 +117,13 @@ registerSketch('sk5', function (p) {
       let sortedplayerSetsMap = playerSetsMap; //no sorting
       //let sortedplayerSetsMap = new Map([...playerSetsMap.entries()].sort((a, b) => - a[1][sortBy] + b[1][sortBy]));
 
-      let sourcesY = 220;
+      let sourcesY = 350;
       let barHeight = 10;
       let ySpacing = 50;
       let startSpacing = ySpacing;
       let totalStats = [0, 0, 0, 0, 0];
+      p.textSize(18)
+      p.text("Sources", fourthWidth, sourcesY + ySpacing / 2 + infoY)
       sortedplayerSetsMap.entries().forEach((entry) => {
         let option = entry[0];
         let playerSets = entry[1];
@@ -144,36 +146,40 @@ registerSketch('sk5', function (p) {
       let accuracy = Math.floor(totalStats[3] / sortedplayerSetsMap.size * 10) / 10;
       let percentage = totalStats[4] / sortedplayerSetsMap.size;
       let totalPlayers = totalStats[1] + totalStats[2] + totalStats[0];
+      let legendY = 29;
+      let legendX = 260;
+      p.textAlign(p.LEFT, p.CENTER);
       p.fill(correctColor);
-      p.text(correctPlayers + " / " + totalPlayers, fourthWidth - 180, infoY + 40);
+      p.text("Correct Players: " + correctPlayers + " / " + totalPlayers, fourthWidth - legendX, infoY + legendY + 40);
       p.fill(incorrectColor);
-      p.text(incorrectPlayers + " / " + totalPlayers, fourthWidth - 180, infoY + 60);
+      p.text("Incorrect Players: " + incorrectPlayers + " / " + totalPlayers, fourthWidth - legendX, infoY + legendY + 60);
       p.fill(missedColor);
-      p.text(missedPlayers + " / " + totalPlayers, fourthWidth - 180, infoY + 80);
+      p.text("Missed Players: " + missedPlayers + " / " + totalPlayers, fourthWidth - legendX, infoY + legendY + 80);
       p.fill('black');
-      p.text("Accuracy: +/- " + accuracy, fourthWidth - 180, infoY + 110);
+      p.text("Accuracy: +/- " + accuracy, fourthWidth - legendX, infoY + legendY + 110);
+      p.textAlign(p.CENTER, p.CENTER);
       p.textSize(20);
       p.textStyle(p.ITALIC);
       p.text(percentage + "% of total guesses are correct", fourthWidth, infoY)
       p.textStyle(p.NORMAL);
       p.textSize(16);
 
-      let bigGraphLength = 200;
-      drawBigBarGraph(midWidth - bigGraphLength - bigGraphLength / 2, infoY + 30, bigGraphLength, bigGraphLength, missedPlayers, incorrectPlayers, correctPlayers, totalPlayers)
+      let bigGraphLength = 220;
+      drawBigBarGraph(midWidth - 200 - bigGraphLength / 2, infoY + 27, bigGraphLength, bigGraphLength, missedPlayers, incorrectPlayers, correctPlayers, totalPlayers)
 
 
 
 
-      let interactY = graphPositionOffsetY + graphHeight + 30;
+      let interactY = infoY + 350;
       correctnessRange = correctnessSlider.value();
       correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
       p.textSize(14);
       p.textAlign(p.RIGHT, p.CENTER);
       p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 30);
       p.textAlign(p.LEFT, p.CENTER);
-      p.text("20", fourthWidth + sliderLength / 2, interactY - 30);
+      p.text("18", fourthWidth + sliderLength / 2 - 10, interactY - 30);
       p.textAlign(p.CENTER, p.CENTER);
-      p.text("when the difference is less than " + correctnessRange, fourthWidth, interactY - 70);
+      p.text("Accuracy: +/- " + correctnessRange, fourthWidth, interactY - 65);
 
 
       let yStart = graphPositionOffsetY;
@@ -227,8 +233,8 @@ registerSketch('sk5', function (p) {
           drawDot(x + textPixelLineOffset + 2, y);
           p.noStroke();
           if (draftPosition !== "N/A") {
-            p.textSize(numbersTextSize * 0.7);
-            p.text(draftPosition, x + textPixelLineOffset + 12, y);
+            p.textSize(numbersTextSize * 0.9);
+            p.text(draftPosition, x + textPixelLineOffset + 15, y + 1);
             p.textSize(numbersTextSize);
           }
           d = pointLineDistance(p.mouseX, p.mouseY, x + textPixelLineOffset, y, x + textPixelLineOffset, y);
@@ -266,8 +272,8 @@ registerSketch('sk5', function (p) {
           }
           drawDot(x2 - textPixelLineOffset - 2, y);
           p.noStroke();
-          p.textSize(numbersTextSize * 0.7);
-          p.text(boardRank, x2 - textPixelLineOffset - 12, y);
+          p.textSize(numbersTextSize * 0.9);
+          p.text(boardRank, x2 - textPixelLineOffset - 15, y + 1);
           p.textSize(numbersTextSize);
         } else {
           p.fill(missedColor);
