@@ -96,7 +96,7 @@ registerSketch('sk5', function (p) {
       //title
       p.textStyle(p.BOLD);
       p.textSize(30);
-      p.text("2024 NBA Draft: Media Rankings vs. Draft Positions", midWidth, 40);
+      p.text("2024 NBA Draft: Media Predictions vs. Reality", midWidth, 40);
       p.textSize(22);
       p.text("Can we trust sports media?", midWidth, 75);
       p.textSize(16);
@@ -123,7 +123,7 @@ registerSketch('sk5', function (p) {
       let startSpacing = ySpacing;
       let totalStats = [0, 0, 0, 0, 0];
       p.textSize(18)
-      p.text("Sources", fourthWidth, sourcesY + ySpacing / 2 + infoY)
+      p.text("Media Outlets", fourthWidth, sourcesY + ySpacing / 2 + infoY)
       sortedplayerSetsMap.entries().forEach((entry) => {
         let option = entry[0];
         let playerSets = entry[1];
@@ -156,7 +156,7 @@ registerSketch('sk5', function (p) {
       p.fill(missedColor);
       p.text("Missed Players: " + missedPlayers + " / " + totalPlayers, fourthWidth - legendX, infoY + legendY + 80);
       p.fill('black');
-      p.text("Accuracy: +/- " + accuracy, fourthWidth - legendX, infoY + legendY + 110);
+      p.text("Average Accuracy: ± " + accuracy, fourthWidth - legendX, infoY + legendY + 110);
       p.textAlign(p.CENTER, p.CENTER);
       p.textSize(20);
       p.textStyle(p.ITALIC);
@@ -172,14 +172,24 @@ registerSketch('sk5', function (p) {
 
       let interactY = infoY + 350;
       correctnessRange = correctnessSlider.value();
-      correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY);
+      correctnessSlider.position(fourthWidth - correctnessSlider.width / 2, interactY + 10);
       p.textSize(14);
       p.textAlign(p.RIGHT, p.CENTER);
-      p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 30);
+      p.text("0", fourthWidth - sliderLength / 2 + 10, interactY - 20);
       p.textAlign(p.LEFT, p.CENTER);
-      p.text("18", fourthWidth + sliderLength / 2 - 10, interactY - 30);
+      p.text("18", fourthWidth + sliderLength / 2 - 10, interactY - 20);
       p.textAlign(p.CENTER, p.CENTER);
-      p.text("Accuracy: +/- " + correctnessRange, fourthWidth, interactY - 65);
+      p.textSize(15);
+      p.text("Correctness Range: ± " + correctnessRange + " picks", fourthWidth, interactY - 75);
+      p.textSize(12);
+      let guess = 15;
+      let leftGuess = Math.max(1, guess - correctnessRange);
+      let rightGuess = guess + correctnessRange;
+      if(correctnessRange === 0) {
+        p.text("(A guess of " + guess + " should be picked at " + guess + ")", fourthWidth, interactY - 58);
+      } else {
+        p.text("(A guess of " + guess + " should be between picks " + (leftGuess) + " and " + (rightGuess) + ")", fourthWidth, interactY - 58);
+      }
 
 
       let yStart = graphPositionOffsetY;
@@ -194,8 +204,8 @@ registerSketch('sk5', function (p) {
       p.textSize(18);
       p.text(boardDataName.split(" - ")[0], (x + x2) / 2, infoY);
       p.textSize(numbersTextSize);
-      p.text("Mock Draft", x, yStart - 20);
-      p.text("NBA Draft", x2, yStart - 20);
+      p.text("Media Picks", x, yStart - 20);
+      p.text("NBA Picks", x2, yStart - 20);
 
 
       let hoverData = [];
@@ -354,7 +364,7 @@ registerSketch('sk5', function (p) {
     p.textSize(16);
     p.text(nameParts[0], x - 180, y + height / 3);
     p.textSize(12);
-    p.text("+/- " + accuracy, x + 140, y + 12);
+    p.text("± " + accuracy, x + 140, y + 12);
     p.text(percentage + "%", x + 140, y + height - 6);
     p.text(nameParts[1], x - 180, y + height - 2);
   }

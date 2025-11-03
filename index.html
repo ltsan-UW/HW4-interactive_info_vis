@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/p5.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/addons/p5.sound.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
   <title>INFO 474: Interactive Information Visualization</title>
 </head>
@@ -79,7 +81,8 @@
         <figure>
           <img src="images/sk2-evolution-2.jpg" alt="Sketch #2 - step 2" />
           <figcaption>Step 2 — second layout after peer feedback. Make it follow the mouse.</figcaption>
-          <p>I got feedback that this could be like the lab homework where it follows the mouse to make it more interesting.</p>
+          <p>I got feedback that this could be like the lab homework where it follows the mouse to make it more
+            interesting.</p>
         </figure>
         <figure>
           <img src="images/sk2-evolution-3.jpg" alt="Sketch #2 - step 3" />
@@ -186,23 +189,132 @@
         <figure>
           <img src="images/sk4-evolution-2.jpg" alt="Sketch #4 - step 2" />
           <figcaption>Step 2 — second layout after peer feedback. Could work as a timer.</figcaption>
-          <p>I got feedback that it looked nice, but it could also work to time how you study. I liked this idea since it was different from my other ones.</p>
+          <p>I got feedback that it looked nice, but it could also work to time how you study. I liked this idea since
+            it was different from my other ones.</p>
         </figure>
         <figure>
           <img src="images/sk4-evolution-3.jpg" alt="Sketch #4 - step 3" />
           <figcaption>Step 3 — refined visuals and annotations. Made them blocks with color instead of small lines.
-          <p>I got feedback that you can't distinguish between work and rest easily.</p>
+            <p>I got feedback that you can't distinguish between work and rest easily.</p>
           </figcaption>
         </figure>
       </div>
     </section>
 
-
-
-
-    <!-- Examples -->
+    <!-- Homework 5 -->
     <section id="tab5" class="tab-content" role="tabpanel">
       <div id="sketch-container-sk5" class="sketch-container"></div>
+      <div id="sketch-drawing-sk5" class="sketch-evolution">
+        <div class="sketch-narrative" aria-labelledby="sk4-narrative-title">
+          <h3 id="sk4-narrative-title">2024 NBA Draft: Media Predictions vs. Reality</h3>
+          <ul>
+            <li><strong>Why did you choose the dataset and story?</strong>
+              <ul>
+                <li>
+                  This dataset is a combination of sports media websites' mock drafts, and the real NBA draft results.
+                  I chose this dataset because I was interested to see how well sports media is able to predict how the
+                  draft will go.
+                  Since I'm an NBA fan, I want to know what player each team might pick.
+                </li>
+                <li>
+                  I chose this story because I wanted to know just how accurate the media is at that. Sports media
+                  outlets always like to
+                  push the most exciting news stories, but I think fans might want to know if they can even trust them.
+                </li>
+              </ul>
+            </li>
+
+            <li><strong>Why did you choose that title for your story?</strong>
+              <ul>
+                <li>
+                  I chose that title to first show that we're working in 2024, then the rest of it is to highlight that
+                  it's a comparison.
+                  The "vs." in the title hopefully shows that I want to really show how real or accurate sports media
+                  is.
+                </li>
+              </ul>
+            </li>
+
+            <li><strong>Is it author-driven or user-driven? What visualization genre is it?</strong>
+              <ul>
+                <li>
+                  User-driven: The user can change the required accuracy for correctness on a sliding scale. Users can
+                  also change the source to see and compare between them. I think these interactions help narrate the story,
+                  in regards to how correctness accuracy changes how well media guesses and how changing the source can influence
+                  the accuracy of guesses made.
+
+                </li>
+                <li>Visualization genre: Partitioned Poster. This is the case since there is a beginning, middle, and end with all three parts playing a role in the story.</li>
+              </ul>
+            </li>
+
+            <li><strong>How would you walk someone through this visualization? What is the story being
+                communicated?</strong>
+              <ul>
+                <ol>
+                  <li>Take a look at the top-left corner with the dots. You can see that 44.5% of guesses are correct. Sports media is not that great at predicting results of the draft.</li>
+                  <li>Now take a look at the bottom-left corner under sources. You can see that most of the sources hover around that 40-50% range, but each source has varying results. As a result, the accuracy of draft predictions depend on which sports media outlet you look at.</li>
+                  <li>Now look at the left side graph. Notice that the left side is media picks, while the right side are real draft picks. You can see that some green lines were guessed correctly, while red lines were guessed incorrectly. Among the red lines, notice how they can drop or rise up to 6, 10 spots.
+                    If you were looking at a mock draft, would this be accurate enough for you?
+                  </li>
+                  <li>Move your attention now to the correctness accuracy slider. Move the slider to left and right. Notice how as the correctness accuracy increases, more guesses are correct, and vice versa.
+                    Notice how if you just wanted to know a comfortable range that a player might get picked in, then at ± 5 accuracy, 66% is alright. This means that a player mocked at 15th is likely to between 10th and 20th.
+                    Notice how if you wanted to get more accurate results, the % of correct guesses goes down, and vice versa.
+                  </li>
+                </ol>
+                <li>Story: NBA sports media mock drafts are not very accurate. On average, only 44.5% of predictions are correct when correctness is difined as the difference between mock and draft positions being less than 3.
+                    Accuracy also varies a little by media outlet, usually between a 5-10% difference in accuracy. Even small differences can mean players are picked 6–10 spots away from predictions.
+                    While mock drafts can show a general range — about 66% accuracy within ±5 picks — they shouldn’t be trusted for exact results. </li>
+              </ul>
+            </li>
+
+            <li><strong>Interview feedback (annotated slides)</strong>
+              <ul>
+                <li><em>Interviewee A:</em> Noticed color contrast and ranking shifts first; quickly understood media
+                  vs. reality theme.</li>
+                <li><em>Interviewee B:</em> Focused on surprising pick differences; appreciated clarity of visual
+                  hierarchy.</li>
+              </ul>
+            </li>
+
+            <li><strong>Main design principles guiding encoding choices</strong>
+              <ul>
+                <li>Used color to distinguish predicted vs. actual picks.</li>
+                <li>Represented rank differences through line slopes or position shifts.</li>
+                <li>Maintained simplicity and consistent layout across axes.</li>
+              </ul>
+            </li>
+
+            <li><strong>How did you ensure clarity, hierarchy, and memorability?</strong>
+              <ul>
+                <li>Clear labels, color legends, and annotations improve readability.</li>
+                <li>Hierarchy emphasized top picks and biggest changes using color and annotation size.</li>
+                <li>Memorability enhanced through highlights of notable draft surprises.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+
+        <h3>Sketch evolution</h3>
+        <p class="small-note">Replace <b>these images</b> with your own sketch evolution images.</p>
+        <figure>
+          <img src="images/sk4-evolution-1.jpg" alt="Sketch #4 - step 1" />
+          <figcaption>Step 1 — initial layout</figcaption>
+        </figure>
+        <figure>
+          <img src="images/sk4-evolution-2.jpg" alt="Sketch #4 - step 2" />
+          <figcaption>Step 2 — second layout after peer feedback. Could work as a timer.</figcaption>
+          <p>I got feedback that it looked nice, but it could also work to time how you study. I liked this idea since
+            it was different from my other ones.</p>
+        </figure>
+        <figure>
+          <img src="images/sk4-evolution-3.jpg" alt="Sketch #4 - step 3" />
+          <figcaption>Step 3 — refined visuals and annotations. Made them blocks with color instead of small lines.
+            <p>I got feedback that you can't distinguish between work and rest easily.</p>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
     <section id="tab6" class="tab-content" role="tabpanel">
