@@ -370,16 +370,24 @@ registerSketch('sk5', function (p) {
   }
 
   function drawHoverBox(hoverData) {
-    let box = [200, 100];
+    let box = [200, 80];
     p.fill("white");
     p.stroke("lightgrey");
-    p.rect(p.mouseX - box[0] / 2, p.mouseY - 20 - box[0] / 2, box[0], box[1]);
+    p.rect(p.mouseX - box[0] / 2, p.mouseY - box[0] / 2, box[0], box[1]);
     p.line(p.mouseX, p.mouseY, p.mouseX, p.mouseY - 20);
     p.noStroke();
     p.fill(textColor);
-    p.text(hoverData[0], p.mouseX, p.mouseY - 20 - box[0] / 2 + 15);
-    p.text("Rank: " + hoverData[1], p.mouseX - 40, p.mouseY - 20 - box[0] / 2 + 40);
-    p.text("Pick: " + hoverData[2], p.mouseX + 40, p.mouseY - 20 - box[0] / 2 + 40);
+    p.textStyle(p.BOLD);
+    p.textSize(16);
+    p.text(hoverData[0], p.mouseX, p.mouseY - box[0] / 2 + 15);
+    p.textSize(13);
+    p.textStyle(p.NORMAL);
+    p.textAlign(p.LEFT, p.CENTER);
+    p.text("Media Pick: " + hoverData[1], p.mouseX - 90, p.mouseY - box[0] / 2 + 40);
+    p.text("Draft Pick: " + hoverData[2], p.mouseX - 90, p.mouseY + 20 - box[0] / 2 + 40);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.text("Difference:", p.mouseX + 60, p.mouseY - box[0] / 2 + 40);
+    p.text(Math.abs(hoverData[1] - hoverData[2]), p.mouseX + 60, p.mouseY + 20 - box[0] / 2 + 40);
   }
 
   function drawBarGraph(x, y, length, height, miss, inc, cor, max) {
