@@ -240,8 +240,7 @@
                 <li>
                   User-driven: The user can change the required accuracy for correctness on a sliding scale. Users can
                   also change the source to see and compare between them. I think these interactions help narrate the story,
-                  in regards to how correctness accuracy changes how well media guesses and how changing the source can influence
-                  the accuracy of guesses made.
+                  in regards to how the correctness range changes how well media guesses and each media outlet has a different accuracy of guesses made.
 
                 </li>
                 <li>Visualization genre: Partitioned Poster. This is the case since there is a beginning, middle, and end with all three parts playing a role in the story.</li>
@@ -257,8 +256,8 @@
                   <li>Now look at the left side graph. Notice that the left side is media picks, while the right side are real draft picks. You can see that some green lines were guessed correctly, while red lines were guessed incorrectly. Among the red lines, notice how they can drop or rise up to 6, 10 spots.
                     If you were looking at a mock draft, would this be accurate enough for you?
                   </li>
-                  <li>Move your attention now to the correctness accuracy slider. Move the slider to left and right. Notice how as the correctness accuracy increases, more guesses are correct, and vice versa.
-                    Notice how if you just wanted to know a comfortable range that a player might get picked in, then at ± 5 accuracy, 66% is alright. This means that a player mocked at 15th is likely to between 10th and 20th.
+                  <li>Move your attention now to the correctness range slider. Move the slider to left and right. Notice how as the correctness range increases, more guesses are correct, and vice versa.
+                    Notice how if you just wanted to know a comfortable range that a player might get picked in, then at ± 5 range, 66% is okay. This means that a player mocked at 15th is likely to between 10th and 20th.
                     Notice how if you wanted to get more accurate results, the % of correct guesses goes down, and vice versa.
                   </li>
                 </ol>
@@ -268,90 +267,34 @@
               </ul>
             </li>
 
-            <li><strong>Interview feedback (annotated slides)</strong>
+            <li><strong>Interview feedback</strong>
               <ul>
-                <li><em>Interviewee A:</em> Noticed color contrast and ranking shifts first; quickly understood media
-                  vs. reality theme.</li>
-                <li><em>Interviewee B:</em> Focused on surprising pick differences; appreciated clarity of visual
-                  hierarchy.</li>
+                <li><em>Interviewee A:</em> They went through the normal storyline progression and came up with the conclusion that sports media can't really be trusted unless the range of correctness is high.
+                  They also pointed out that only one media source has more than 50% when the correctness range was within ±3 picks.
+                </li>
+                <li><em>Interviewee B:</em>  They went through the visualization and just noticed that there was a lot of red. This gave him the conclusion that sports media can't really be trusted for exact results.</li>
               </ul>
             </li>
 
             <li><strong>Main design principles guiding encoding choices</strong>
               <ul>
-                <li>Used color to distinguish predicted vs. actual picks.</li>
-                <li>Represented rank differences through line slopes or position shifts.</li>
-                <li>Maintained simplicity and consistent layout across axes.</li>
+                <li>Used color to distinguish incorrect and correct guesses. Missed guesses are dark red, signifying a "worse" incorrect guess.</li>
+                <li>Used the most ink to draw attention towards the beginning of the story / the main idea.</li>
+                <li>Used interactivity to draw attention to changes that are correlated with the changed value.</li>
+                <li>Used text sizes and styles to draw attention to each text in order.</li>
               </ul>
             </li>
 
             <li><strong>How did you ensure clarity, hierarchy, and memorability?</strong>
               <ul>
-                <li>Clear labels, color legends, and annotations improve readability.</li>
-                <li>Hierarchy emphasized top picks and biggest changes using color and annotation size.</li>
-                <li>Memorability enhanced through highlights of notable draft surprises.</li>
+                <li>Clear labels, cohesive colororing, and exaplaining annotations improve readability.</li>
+                <li>Hierarchy is emphasized by using fotn size, bolding text and italicizing text as needed.</li>
+                <li>Memorability was ensured by making title have key information. I also used redundancy by having there be red and green in the three parts of the visualization. That way, the main idea that media is only about 50% accurate for predictions within ±3 picks should get hammered in and be memorable.</li>
               </ul>
             </li>
           </ul>
         </div>
-
-
-        <h3>Sketch evolution</h3>
-        <p class="small-note">Replace <b>these images</b> with your own sketch evolution images.</p>
-        <figure>
-          <img src="images/sk4-evolution-1.jpg" alt="Sketch #4 - step 1" />
-          <figcaption>Step 1 — initial layout</figcaption>
-        </figure>
-        <figure>
-          <img src="images/sk4-evolution-2.jpg" alt="Sketch #4 - step 2" />
-          <figcaption>Step 2 — second layout after peer feedback. Could work as a timer.</figcaption>
-          <p>I got feedback that it looked nice, but it could also work to time how you study. I liked this idea since
-            it was different from my other ones.</p>
-        </figure>
-        <figure>
-          <img src="images/sk4-evolution-3.jpg" alt="Sketch #4 - step 3" />
-          <figcaption>Step 3 — refined visuals and annotations. Made them blocks with color instead of small lines.
-            <p>I got feedback that you can't distinguish between work and rest easily.</p>
-          </figcaption>
-        </figure>
       </div>
-    </section>
-
-    <section id="tab6" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk6" class="sketch-container"></div>
-    </section>
-
-    <section id="tab7" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk7" class="sketch-container"></div>
-    </section>
-
-    <section id="tab8" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk8" class="sketch-container"></div>
-    </section>
-
-    <section id="tab9" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk9" class="sketch-container"></div>
-    </section>
-
-    <section id="tab10" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk10" class="sketch-container"></div>
-    </section>
-
-    <section id="tab11" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk11" class="sketch-container"></div>
-      <p>Adapted from Golan Levin, 2016-2018</p>
-    </section>
-
-    <section id="tab12" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk12" class="sketch-container"></div>
-    </section>
-
-    <section id="tab13" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk13" class="sketch-container"></div>
-    </section>
-
-    <section id="tab14" class="tab-content" role="tabpanel">
-      <div id="sketch-container-sk14" class="sketch-container"></div>
     </section>
 
   </main>
